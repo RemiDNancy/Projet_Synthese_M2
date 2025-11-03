@@ -4,7 +4,7 @@ import time
 
 def scrap(url: str):
     html = {"head": "#react-project-header", "desc": "#react-campaign", "rewards": ["#react-rewards-tab", ".p3.pt4"], "creator": ["#react-creator-tab", ".grid-col-12.grid-col-8-md"], 
-            "faq": ["#project-faqs", ".mb5.grid-col-8-sm"], "updates": ["#project-post-interface", ".grid-col-12.grid-col-8-md.grid-col-offset-2-md.mb6"], "comments": ["#react-project-comments", ".bg-grey-100.border.border-grey-400.p2.mb3"]}
+            "faq": ["#project-faqs", ".mb5.grid-col-8-sm"], "updates": ["#project-post-interface", ".grid-col-12.grid-col-8-md.grid-col-offset-2-md.mb6"], "comments": ["#react-project-comments", ".text-center.bg-grey-200.p2.type-14"]}
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True ,
