@@ -30,5 +30,4 @@ jobs:
         with:
           name: résultats-routine
           path: |
-            *.csv
-            *.log
+            Downloaded_html/*.html
