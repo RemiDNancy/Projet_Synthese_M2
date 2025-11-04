@@ -23,7 +23,7 @@ jobs:
         run: python main_execution.py
 
       - name: Save results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: résultats-routine
           path: |
