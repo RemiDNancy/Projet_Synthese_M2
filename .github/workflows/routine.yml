@@ -19,6 +19,9 @@ jobs:
       - name: Installing dependencies
         run: pip install -r requirements.txt
 
+      - name: browser install
+        run: playwright install
+
       - name: Execute scrapper
         run: python main_execution.py
 
