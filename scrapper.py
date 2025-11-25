@@ -1,73 +1,101 @@
-from playwright.sync_api import sync_playwright
+import undetected_chromedriver as uc
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
+import random
 
+# constantes
+TEMPS_PAUSE_MIN = 4 # temps de pause aléatoire au cas ou
+TEMPS_PAUSE_MAX = 5
+# Data to collect
+html = {"head": "react-project-header", "desc": "react-campaign", "rewards": ["react-rewards-tab", ".col-span-12.col-span-8-md.col-span-9-lg.flex.flex-column.gap8.pt2.pt8-md"], "creator": ["react-creator-tab", ".kds-flex.kds-items-center.kds-gap-05.kds-mb-06"], 
+        "faq": ["project-faqs", ".mb5.grid-col-8-sm"], "updates": ["project-post-interface", ".grid-col-12.grid-col-8-md.grid-col-offset-2-md.mb6"], "comments": ["react-project-comments", ".text-center.bg-grey-200.p2.type-14"]}
 
-def scrap(url: str):
-    html = {"head": "#react-project-header", "desc": "#react-campaign", "rewards": ["#react-rewards-tab", ".p3.pt4"], "creator": ["#react-creator-tab", ".grid-col-12.grid-col-8-md"], 
-            "faq": ["#project-faqs", ".mb5.grid-col-8-sm"], "updates": ["#project-post-interface", ".grid-col-12.grid-col-8-md.grid-col-offset-2-md.mb6"], "comments": ["#react-project-comments", ".text-center.bg-grey-200.p2.type-14"]}
+# config
+options = uc.ChromeOptions()
+options.add_argument("--window-size=1920,1080")
+options.add_argument("--disable-gpu")
+options.add_argument("--no-sandbox")
+options.binary_location = "/usr/bin/chromium"
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True ,
-                                    args=[
-                                    '--disable-blink-features=AutomationControlled',
-                                    '--no-sandbox',
-                                    '--disable-setuid-sandbox',
-                                    '--disable-infobars',
-                                    '--disable-web-security',
-                                    '--disable-features=IsolateOrigins,site-per-process'
-        ])
+def scrap(url):
+    # initialisation
+    driver = uc.Chrome(options=options, use_subprocess=True)
 
-        page = browser.new_page()
+    start_time = time.time()
+    results = {}
+    try:
+        print("Scraping project")
 
-        page.evaluate("""() => {
-            Object.defineProperty(navigator, 'webdriver', {
-                get: () => undefined
-            });
-            Object.defineProperty(navigator, 'plugins', {
-                get: () => [1, 2, 3, 4, 5]
-            });
-            Object.defineProperty(navigator, 'languages', {
-                get: () => ['fr-FR', 'fr']
-            });
-        }""")
-        page.set_extra_http_headers({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        })
-        
-        page.goto(url)
+        # Go to the page
+        driver.get(url)
 
-        # Wait for JavaScript to load
-        page.wait_for_load_state("domcontentloaded")
+        ###########################################################################
+        # Scrap l'entête
+        element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "react-project-header"))
+        )
+        results["head"] = element.get_attribute("innerHTML")
+        # Scrap la description
+        element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "react-campaign"))
+        )
+        results["desc"] = element.get_attribute("innerHTML")
+        ###########################################################################
 
-        #page.wait_for_selector("#react-campaign")
-        html["desc"] = page.locator("#react-campaign").inner_html() #page.query_selector("#react-campaign")
-        html["head"] = page.locator("#react-project-header").inner_html() #page.query_selector("#react-project-header")
+        # on fait une pause d'une durée aléatoire pour réduire les chances d'être perçu comme un bot
+        pause = random.uniform(TEMPS_PAUSE_MIN, TEMPS_PAUSE_MAX)
+        time.sleep(pause)
 
-        # Go through the differents tabs of kick
+        ###########################################################################
+        #                   Parcourir les pages du projet                         #
+        ###########################################################################
         for key in html.keys():
+
+            # L'entête et la description sont déjà faite donc skip
             if key == "head" or key == "desc":
                 continue
+
+            # on fait une pause d'une durée aléatoire pour réduire les chances d'être perçu comme un bot
+            pause = random.uniform(TEMPS_PAUSE_MIN, TEMPS_PAUSE_MAX)
+            time.sleep(pause)
+
+            # Trouver l'onglet de la page et cliquer dessus
+            driver.find_element(By.ID, key+"-emoji").click()
+
+            print("waiting for the css class")
+            # Attendre jusqu'à 10 secondes que le contenue de la balise apparaisse (json de l'onglet terminé)
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, str(html[key][1])))
+            )
+            print("css found")
+
+            # Récupérer le balise de l'onglet
+            balise = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.ID, str(html[key][0])))
+            )
+
+            results[key] = balise.get_attribute("innerHTML")
         
-            # Locate and click to change tab
-            page.locator("#"+key+"-emoji").click()
+        total_time= time.time() - start_time
+        print("Projet collecté en "+ str(total_time) +"\n")
 
-            locator = page.locator(html[key][0])
+    except Exception as e:
+        print(f"Erreur : {e}")
 
-            #pat = ".*?"+html[key][1]+".*?"
-            #expect(locator).to_contain_text(html[key][1], timeout=10000)
-            #locator.get_by_text(re.compile(pat, re.IGNORECASE))
-            #expect(locator.get_by_text(re.compile(pat, re.IGNORECASE))).to_be_visible(timeout=10000)
-            locator.locator(html[key][1]).first.inner_html()
+    finally:
+        driver.quit()
 
-            #page.wait_for_timeout(2000) rewards-tab--available 
 
-            html[key] = locator.inner_html()
-
-        # Close the browser
-        browser.close()
-
-        # Save or process the HTML
+    #convertir et sauvegarder les projets
+    if results:
         name: str = "Downloaded_html/"+ str(round(time.time())) +".html"
         with open(name, "w", encoding="utf-8") as f:
-            for key, value in html.items():
+            for key, value in results.items():
                 f.write("<!--- " + key + " --->\n" + value + "\n")
+    else:
+        print("Aucun projet collecté \n")
+
+if __name__ == "__main__":
+    scrap("https://www.kickstarter.com/projects/1472560351/wings-of-light-the-hummingbird-symphony")
