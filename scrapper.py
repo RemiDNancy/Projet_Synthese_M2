@@ -6,6 +6,7 @@ from selenium.webdriver import ActionChains
 import time
 import random
 import json
+import user_info
 
 # constantes
 TEMPS_PAUSE_MIN = 4 # temps de pause aléatoire au cas ou
@@ -15,12 +16,6 @@ html = {"rewards": ["react-rewards-tab", ".col-span-12.col-span-8-md.col-span-9-
         "faq": ["project-faqs", ".mb5.grid-col-8-sm"], "updates": ["project-post-interface", ".grid-col-12.grid-col-8-md.grid-col-offset-2-md.mb6"], "comments": ["react-project-comments", ".text-center.bg-grey-200.p2.type-14"]}
 
 
-# config
-options = uc.ChromeOptions()
-options.add_argument("--window-size=1920,1080")
-options.add_argument("--disable-gpu")
-options.add_argument("--no-sandbox")
-options.binary_location = "/usr/bin/chromium"
 
 def scrap_entete(driver: uc.Chrome, results):
     
@@ -59,7 +54,14 @@ scrap_functions = {
 
 def scrap(url):
     # initialisation
-    driver = uc.Chrome(options=options, use_subprocess=True, headless=False)
+    # config
+    options = uc.ChromeOptions()
+    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.binary_location = user_info.chrome_path
+
+    driver = uc.Chrome(options=options, version_main=142, use_subprocess=True, headless=False)
 
     start_time = time.time()
     results = {}
