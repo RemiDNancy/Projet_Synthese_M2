@@ -12,38 +12,101 @@ import user_info
 TEMPS_PAUSE_MIN = 4 # temps de pause aléatoire au cas ou
 TEMPS_PAUSE_MAX = 5
 # Data to collect
-html = {"rewards": ["react-rewards-tab", ".col-span-12.col-span-8-md.col-span-9-lg.flex.flex-column.gap8.pt2.pt8-md"], "creator": ["react-creator-tab", ".kds-flex.kds-items-center.kds-gap-05.kds-mb-06"], 
-        "faq": ["project-faqs", ".mb5.grid-col-8-sm"], "updates": ["project-post-interface", ".grid-col-12.grid-col-8-md.grid-col-offset-2-md.mb6"], "comments": ["react-project-comments", ".text-center.bg-grey-200.p2.type-14"]}
-
+html = {"rewards": ["react-rewards-tab", ".col-span-12.col-span-8-md.col-span-9-lg.flex.flex-column.gap8.pt2.pt8-md"], "faq": ["project-faqs", ".mb5.grid-col-8-sm"], 
+        "updates": ["project-post-interface", ".grid-col-12.grid-col-8-md.grid-col-offset-2-md.mb6"], "comments": ["react-project-comments", ".text-center.bg-grey-200.p2.type-14"]}
+unused_html = {"creator": ["react-creator-tab", ".kds-flex.kds-items-center.kds-gap-05.kds-mb-06"],}
 
 
 def scrap_entete(driver: uc.Chrome, results):
     
-    return results
+    jsondata = driver.find_element(By.ID, "react-project-header").get_attribute("data-initial")
+
+    if (jsondata):
+        jsonloaded: dict = json.loads(jsondata)["project"]
+        results["creator"] = jsonloaded.pop("creator")
+        results["collaborators"] = jsonloaded.pop("collaborators")
+        results["project"] = jsonloaded
 
 def scrap_description(driver: uc.Chrome, results):
 
-    return results
+    res = {
+        "titre": [],
+        "texte": [],
+        "links": [],
+        "imgs" : []
+    }
+    desc = driver.find_element(By.CSS_SELECTOR, ".rte__content.ck.ck-content").find_element("css selector", "div")
+    for element in desc.find_elements("css selector", "p"):
+        res["texte"].append(element.get_attribute('innerHTML'))
+
+    for element in desc.find_elements("css selector", "h3"):
+        res["titre"].append(element.get_attribute('innerHTML'))
+
+    for element in desc.find_elements("css selector", "a"):
+        res["links"].append(element.get_attribute('href'))
+    
+    for element in desc.find_elements("css selector", "img"):
+        res["imgs"].append(element.get_attribute('src'))
+
+    results["description"] = res
 
 def scrap_rewards(driver: uc.Chrome, results):
-    
-    return results
+    res = {
+        "available": [],
+        "gone": []
+    }
 
+    containers = driver.find_elements(By.CSS_SELECTOR, "div.flex.flex-column.gap4")
+
+    for container in containers:
+        reward = {}
+        key = "gone"
+        if container.find_element(By.CSS_SELECTOR, ".support-700.normal.kds-heading.type-21.mb0.display-none-md").get_attribute("innerHTML") == "Available rewards":
+            key = "available"
+        for element in container.find_elements("css selector", "article"):
+            reward["logo"] = element.find_element("css selector", "img").get_attribute('src')
+            reward["name"] = element.find_element("css selector", "header").find_element("css selector", "h3").get_attribute('innerHTML')
+            reward["price"] = element.find_element(By.CSS_SELECTOR, ".support-700.type-18.m0.shrink0").get_attribute('innerHTML')
+            reward["delivery"] = element.find_element("css selector", "time").get_attribute('datetime')
+            reward["backers"] = int(str(element.find_element(By.CSS_SELECTOR, "div.flex.items-center.gap4px > span[aria-label]").get_attribute('innerHTML')))
+            reward["desc"] = element.find_element(By.CSS_SELECTOR, ".type-16.support-700.text-prewrap").get_attribute('innerHTML')
+            tmp = element.find_elements(By.XPATH, ".//h3[contains(text(), 'Limited quantity')]/following-sibling::div[@class='type-14']")
+            reward["left"] = tmp[0].get_attribute("innerHTML") if tmp else None
+            tmp = element.find_elements(By.XPATH, ".//h3[contains(text(), 'Ships to')]/following-sibling::div[@class='type-14']")
+            reward["shipping"] = tmp[0].get_attribute("innerHTML") if tmp else None
+            reward["items"] = []
+            for item in element.find_element(By.CSS_SELECTOR, ".flex.flex-column.gap1").find_elements(By.CSS_SELECTOR, ".border.border-support-700.mb3.py3.px3.radius4px.clip"):
+                blob = {}
+                blob["name"] = item.find_element("css selector", "h3").get_attribute('innerHTML')
+                blob["quantity"] = item.find_element("css selector", "p").get_attribute('innerHTML')
+                reward["items"].append(blob)
+            reward["options"] = []
+            for option in element.find_element(By.CSS_SELECTOR, ".mt4.flex.flex-column.gap1").find_elements(By.CSS_SELECTOR, ".border.border-support-700.mb3.py3.px3.radius4px.clip"):
+                blob = {}
+                blob["name"] = option.find_element("css selector", "h3").get_attribute('innerHTML')
+                blob["price"] = option.find_element("css selector", "p").get_attribute('innerHTML')
+                blob["desc"] = option.find_element(By.CSS_SELECTOR, ".type-14.lh20px.mb0.support-700").get_attribute('innerHTML')
+                reward["options"].append(blob)
+            res[key].append(reward.copy())
+    results["rewards"] = res
+
+# Unused as creator info are collected in the head
 def scrap_creator(driver: uc.Chrome, results):
-    
-    return results
+    res = {
+        "tags" : "kds-flex kds-flex-wrap kds-gap-02" # repeat creator | super backer...
+    }
 
 def scrap_faq(driver: uc.Chrome, results):
     
-    return results
+    pass
 
 def scrap_updates(driver: uc.Chrome, results):
     
-    return results
+    pass
 
 def scrap_comments(driver: uc.Chrome, results):
     
-    return results
+    pass
 
 scrap_functions = {
     "rewards": scrap_rewards,
@@ -78,14 +141,15 @@ def scrap(url):
         element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "react-campaign"))
         )
-        results = scrap_description(driver, results)
 
         # Cherche l'entete, l'element react-project-header n'existe pas si le projet est finit
         element = driver.find_element(By.ID, "react-project-header")
         if element:
-            results = scrap_entete(driver, results)
+            scrap_entete(driver, results)
         else:
             results["head"] = "<p>No Head, project ended</p>"
+        
+        scrap_description(driver, results)
         
         ###########################################################################
 
@@ -100,10 +164,6 @@ def scrap(url):
         
             print("scrap : "+ str(key))
 
-            # on fait une pause d'une durée aléatoire pour réduire les chances d'être perçu comme un bot
-            pause = random.uniform(TEMPS_PAUSE_MIN, TEMPS_PAUSE_MAX)
-            time.sleep(pause)
-
             # Trouver l'onglet de la page et cliquer dessus
             driver.find_element(By.ID, key+"-emoji").click()
 
@@ -114,8 +174,12 @@ def scrap(url):
             )
             print("balise css found")
 
+            # on fait une pause d'une durée aléatoire pour réduire les chances d'être perçu comme un bot
+            pause = random.uniform(TEMPS_PAUSE_MIN, TEMPS_PAUSE_MAX)
+            time.sleep(pause)
+
             # Appel la fonction de scrap correspondante
-            results = scrap_functions.get(key, scrap_comments)(driver, results)
+            scrap_functions.get(key, scrap_comments)(driver, results)
 
             # Mouvement de souris imittant un comportement humain 
             iframe = driver.find_element(By.ID, str(html[key][0]))
@@ -155,4 +219,4 @@ def scrap(url):
         print("Projet non collecté \n")
 
 if __name__ == "__main__":
-    scrap("https://www.kickstarter.com/projects/1472560351/wings-of-light-the-hummingbird-symphony")
+    scrap("https://www.kickstarter.com/projects/elocinsolis/stella-the-shiba-inu-acrylic-keychains")
