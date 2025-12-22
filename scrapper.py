@@ -12,8 +12,9 @@ import user_info
 TEMPS_PAUSE_MIN = 4 # temps de pause aléatoire au cas ou
 TEMPS_PAUSE_MAX = 5
 # Data to collect
-html = {"rewards": ["react-rewards-tab", ".col-span-12.col-span-8-md.col-span-9-lg.flex.flex-column.gap8.pt2.pt8-md"], "faq": ["project-faqs", ".mb5.grid-col-8-sm"], 
-        "updates": ["project-post-interface", ".grid-col-12.grid-col-8-md.grid-col-offset-2-md.mb6"], "comments": ["react-project-comments", ".text-center.bg-grey-200.p2.type-14"]}
+html = {"rewards": ["react-rewards-tab", ".col-span-12.col-span-8-md.col-span-9-lg.flex.flex-column.gap8.pt2.pt8-md"], 
+        "faq": ["project-faqs", ".mb5.grid-col-8-sm"], "updates": ["project-post-interface", ".grid-col-12.grid-col-8-md.grid-col-offset-2-md.mb6"], 
+        "comments": ["react-project-comments", ".text-center.bg-grey-200.p2.type-14"]}
 unused_html = {"creator": ["react-creator-tab", ".kds-flex.kds-items-center.kds-gap-05.kds-mb-06"],}
 
 
@@ -75,18 +76,20 @@ def scrap_rewards(driver: uc.Chrome, results):
             tmp = element.find_elements(By.XPATH, ".//h3[contains(text(), 'Ships to')]/following-sibling::div[@class='type-14']")
             reward["shipping"] = tmp[0].get_attribute("innerHTML") if tmp else None
             reward["items"] = []
-            for item in element.find_element(By.CSS_SELECTOR, ".flex.flex-column.gap1").find_elements(By.CSS_SELECTOR, ".border.border-support-700.mb3.py3.px3.radius4px.clip"):
-                blob = {}
-                blob["name"] = item.find_element("css selector", "h3").get_attribute('innerHTML')
-                blob["quantity"] = item.find_element("css selector", "p").get_attribute('innerHTML')
-                reward["items"].append(blob)
+            if element.find_elements(By.CSS_SELECTOR, ".flex.flex-column.gap1"):
+                for item in element.find_element(By.CSS_SELECTOR, ".flex.flex-column.gap1").find_elements(By.CSS_SELECTOR, ".border.border-support-700.mb3.py3.px3.radius4px.clip"):
+                    blob = {}
+                    blob["name"] = item.find_element("css selector", "h3").get_attribute('innerHTML')
+                    blob["quantity"] = item.find_element("css selector", "p").get_attribute('innerHTML')
+                    reward["items"].append(blob)
             reward["options"] = []
-            for option in element.find_element(By.CSS_SELECTOR, ".mt4.flex.flex-column.gap1").find_elements(By.CSS_SELECTOR, ".border.border-support-700.mb3.py3.px3.radius4px.clip"):
-                blob = {}
-                blob["name"] = option.find_element("css selector", "h3").get_attribute('innerHTML')
-                blob["price"] = option.find_element("css selector", "p").get_attribute('innerHTML')
-                blob["desc"] = option.find_element(By.CSS_SELECTOR, ".type-14.lh20px.mb0.support-700").get_attribute('innerHTML')
-                reward["options"].append(blob)
+            if element.find_elements(By.CSS_SELECTOR, ".mt4.flex.flex-column.gap1"):
+                for option in element.find_element(By.CSS_SELECTOR, ".mt4.flex.flex-column.gap1").find_elements(By.CSS_SELECTOR, ".border.border-support-700.mb3.py3.px3.radius4px.clip"):
+                    blob = {}
+                    blob["name"] = option.find_element("css selector", "h3").get_attribute('innerHTML')
+                    blob["price"] = option.find_element("css selector", "p").get_attribute('innerHTML')
+                    blob["desc"] = option.find_element(By.CSS_SELECTOR, ".type-14.lh20px.mb0.support-700").get_attribute('innerHTML')
+                    reward["options"].append(blob)
             res[key].append(reward.copy())
     results["rewards"] = res
 
@@ -97,16 +100,70 @@ def scrap_creator(driver: uc.Chrome, results):
     }
 
 def scrap_faq(driver: uc.Chrome, results):
-    
-    pass
+    res = []
+    results["faq"] = res
+
+    faq = driver.find_elements(By.CSS_SELECTOR, ".type-14.navy-700.medium")
+
+    if not faq : return 
+
+    faq = driver.find_element(By.ID, "project-faqs").find_element(By.CSS_SELECTOR, "ul").find_elements(By.CSS_SELECTOR, "li")
+
+    for element in faq:
+        question = {}
+        question["question"] = element.find_element("css selector", ".type-14.navy-700.medium").get_attribute('innerHTML')
+        question["answer"] = []
+        for part in element.find_elements("css selector", "p"):
+            question["answer"].append(part.get_attribute('innerHTML'))
+        question["lastUpdated"] = element.find_element("css selector", "time").get_attribute('datetime')
+        res.append(question.copy())
+
+    results["faq"] = res
 
 def scrap_updates(driver: uc.Chrome, results):
+    res = []
+
+    container = driver.find_elements(By.CSS_SELECTOR, "truncated-post soft-black block")
+
+    for element in container:
+        update = {}
+
+        update["name"] = element.find_element(By.CSS_SELECTOR, ".kds-mb-04.kds-type.kds-type-heading-xl").get_attribute('innerHTML')
+        update["uploadTime"] = element.find_element(By.CSS_SELECTOR, ".kds-text-secondary.kds-type.kds-type-body-sm").get_attribute('innerHTML')
+        
+        res.append(update.copy())
     
-    pass
+    res.reverse()
+    results["updates"] = res
 
 def scrap_comments(driver: uc.Chrome, results):
+    res = []
+
+    tmp = driver.find_elements(By.CSS_SELECTOR, ".bg-grey-100.border.border-grey-400.p2.mb3")
+    if not tmp : 
+        print("no comments")
+        results["comments"] = res
+        return
+
+    comments = tmp[0].find_elements(By.CSS_SELECTOR, ":scope > li")
+
+    for element in comments:
+        comment = {}
+        tmp = element.find_elements(By.CSS_SELECTOR, ":scope > div")
+        if not tmp : continue
+        comment["pseudo"] = tmp[0].find_element(By.CSS_SELECTOR, "span.mr2").find_element(By.CSS_SELECTOR, "span").get_attribute("innerHTML")
+        comment["uploadTime"] = tmp[0].find_element(By.CSS_SELECTOR, "time").get_attribute('datetime')
+        comment["text"] = tmp[0].find_element(By.CSS_SELECTOR, "p").get_attribute('innerHTML')
+        comment["replies"] = []
+        for reply in element.find_elements(By.CSS_SELECTOR, "li"):
+            rep = {}
+            rep["pseudo"] = reply.find_element(By.XPATH, ".//a[@class='comment-link']/preceding-sibling::span[@class='mr2']").find_element(By.CSS_SELECTOR, "span").get_attribute("innerHTML")
+            rep["uploadTime"] = reply.find_element(By.CSS_SELECTOR, "time").get_attribute('datetime')
+            rep["text"] = reply.find_element(By.CSS_SELECTOR, "p").get_attribute('innerHTML')
+            comment["replies"].append(rep.copy())
+        res.append(comment.copy())
     
-    pass
+    results["comments"] = res
 
 scrap_functions = {
     "rewards": scrap_rewards,
@@ -127,6 +184,7 @@ def scrap(url):
     driver = uc.Chrome(options=options, version_main=142, use_subprocess=True, headless=False)
 
     start_time = time.time()
+    total_time = 0
     results = {}
     try:
         print("Scraping project")
@@ -143,7 +201,7 @@ def scrap(url):
         )
 
         # Cherche l'entete, l'element react-project-header n'existe pas si le projet est finit
-        element = driver.find_element(By.ID, "react-project-header")
+        element = driver.find_elements(By.ID, "react-project-header")
         if element:
             scrap_entete(driver, results)
         else:
@@ -199,11 +257,12 @@ def scrap(url):
                 .scroll_by_amount(0, random.randrange(20,100))\
                 .perform()
         
-        total_time= time.time() - start_time
+        total_time = time.time() - start_time
         print("Projet collecté en "+ str(total_time) +"\n")
 
     except Exception as e:
         print(f"Erreur : {e.__cause__}")
+        return 1, time.time() - start_time
 
     finally:
         driver.quit()
@@ -217,6 +276,8 @@ def scrap(url):
             json.dump(results, fichier, indent=4)
     else:
         print("Projet non collecté \n")
+    
+    return 0, total_time
 
 if __name__ == "__main__":
-    scrap("https://www.kickstarter.com/projects/elocinsolis/stella-the-shiba-inu-acrylic-keychains")
+    scrap("https://www.kickstarter.com/projects/haedraulics/very-sincerely-yours?total_hits=54525&category_id=22")
