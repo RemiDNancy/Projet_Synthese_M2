@@ -1,7 +1,7 @@
 # main.py
-from scrapper import scrap
 import undetected_chromedriver as uc
 import time
+from scrapper import scrap
 from random import randrange
 
 import user_info
