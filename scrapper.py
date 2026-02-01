@@ -311,5 +311,5 @@ if __name__ == "__main__":
     options.add_argument("--no-sandbox")
     options.binary_location = user_info.chrome_path
 
-    driver = uc.Chrome(options=options, version_main=142, use_subprocess=True, headless=False)
+    driver = uc.Chrome(options=options, version_main=144, use_subprocess=True, headless=False)
     scrap("https://www.kickstarter.com/projects/lifespirittarot/bricks-of-fate-tarot-built-brick-by-brick", driver)

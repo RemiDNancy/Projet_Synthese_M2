@@ -29,7 +29,7 @@ if __name__ == "__main__":
     options.add_argument("--no-sandbox")
     options.binary_location = user_info.chrome_path
 
-    driver = uc.Chrome(options=options, version_main=142, use_subprocess=True, headless=False)
+    driver = uc.Chrome(options=options, version_main=144, use_subprocess=True, headless=False)
 
     with open(filename, 'r', encoding='utf-8') as fichier:
         for ligne in fichier:
@@ -54,7 +54,7 @@ if __name__ == "__main__":
                 current_user = user_agent[randrange(len(user_agent))]
                 print ("\n ###### \n"+current_user+"\n#####\n")
                 options.add_argument(f"--user-agent={current_user}")
-                driver = uc.Chrome(options=options, version_main=142, use_subprocess=True, headless=False, )
+                driver = uc.Chrome(options=options, version_main=144, use_subprocess=True, headless=False, )
     
     driver.quit()
 
