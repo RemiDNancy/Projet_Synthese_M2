@@ -8,6 +8,7 @@ from selenium.webdriver import ActionChains
 import time
 import random
 import json
+import os
 
 import user_info
 
@@ -290,15 +291,34 @@ def scrap(url, driver):
         return 1, time.time() - start_time
 
     finally:
-
-        # sauvegarder les projets
+        # Sauvegarde incrémentale
         if results:
-            name: str = "donnees_json/"+datetime.datetime.now().strftime("%d-%m-%Y")+".json"
-            # Écriture du dictionnaire dans un fichier JSON
-            with open(name, "w", encoding="utf-8") as fichier:
-                json.dump(results, fichier, indent=4)
+            folder = "donnees_json"
+            if not os.path.exists(folder):
+                os.makedirs(folder)
+
+            file_path = os.path.join(folder, datetime.datetime.now().strftime("%d-%m-%Y") + ".json")
+
+            data = []
+            # Si le fichier existe déjà, on charge son contenu
+            if os.path.exists(file_path):
+                try:
+                    with open(file_path, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                        if not isinstance(data, list):
+                            data = [data]  # Sécurité si le fichier n'était pas une liste
+                except (json.JSONDecodeError, IOError):
+                    data = []
+
+            # On ajoute le nouveau résultat
+            data.append(results)
+
+            # On réécrit le fichier avec la liste mise à jour
+            with open(file_path, "w", encoding="utf-8") as fichier:
+                json.dump(data, fichier, indent=4, ensure_ascii=False)
+            print(f"Projet sauvegardé dans {file_path}")
         else:
-            print("Projet non collecté \n")
+            print("Projet non collecté, rien à sauvegarder\n")
     
     return 0, total_time
 
