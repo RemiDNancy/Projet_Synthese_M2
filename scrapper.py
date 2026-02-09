@@ -1,4 +1,5 @@
 import datetime
+import traceback
 
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
@@ -285,10 +286,21 @@ def scrap(url, driver):
         total_time = time.time() - start_time
         print("Projet collecté en "+ str(total_time) +"\n")
 
-    except Exception as e:
-        print(f"Erreur : {e.__traceback__}")
-        print("#### "+current["state"] +" ####")
+    except Exception:
+        traceback.print_exc()
+        try:
+            os.makedirs("debug", exist_ok=True)
+            ts = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+            driver.save_screenshot(f"debug/fail-{ts}.png")
+            with open(f"debug/fail-{ts}.html", "w", encoding="utf-8") as f:
+                f.write(driver.page_source)
+            print(f"[DEBUG] Sauvegardé: debug/fail-{ts}.png et .html")
+        except Exception:
+            pass
+
+        print("#### " + current["state"] + " ####")
         return 1, time.time() - start_time
+
 
     finally:
         # Sauvegarde incrémentale
