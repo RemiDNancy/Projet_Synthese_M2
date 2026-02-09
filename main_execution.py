@@ -1,4 +1,6 @@
 # main.py
+import os
+from datetime import datetime
 import undetected_chromedriver as uc
 import time
 from scrapper import scrap
@@ -6,7 +8,7 @@ from random import randrange
 
 import user_info
 
-PROJETS_PAR_HEURE = 15
+PROJETS_PAR_HEURE = 17
 SECONDES_PAR_HEURE = 3600
 
 
@@ -25,6 +27,7 @@ if __name__ == "__main__":
     scrappedproject = 0
     filename = "Followed_Projects.txt"
 
+
     # initialisation
     # config
     options = uc.ChromeOptions()
@@ -32,6 +35,18 @@ if __name__ == "__main__":
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.binary_location = user_info.chrome_path
+
+    # réinitialisation du fichier JSON s'il existe déjà
+    dossier_json = "donnees_json"
+    nom_fichier = datetime.now().strftime("%d-%m-%Y") + ".json"
+    chemin_fichier = os.path.join(dossier_json, nom_fichier)
+
+    if os.path.exists(chemin_fichier):
+        print(f"[INFO] Suppression du fichier existant : {chemin_fichier}")
+        os.remove(chemin_fichier)
+    else:
+        print(f"[INFO] Aucun fichier existant pour aujourd'hui ({nom_fichier})")
+
 
     with open(filename, 'r', encoding='utf-8') as fichier:
         urls = [ligne.strip() for ligne in fichier if ligne.strip()]
@@ -61,7 +76,7 @@ if __name__ == "__main__":
             x, y = scrap(url, driver)
 
             if x == 1:
-                print("Erreur de scrap, durée :", y)
+                print("Erreur de scrap")
             else:
                 scrappedproject += 1
 
