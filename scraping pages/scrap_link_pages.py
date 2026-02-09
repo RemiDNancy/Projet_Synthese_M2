@@ -8,9 +8,9 @@ import time
 import random
 
 # constantes
-NOMBRE_PROJETS = 50  # nombre de projets à scraper
+NOMBRE_PROJETS = 250  # nombre de projets à scraper
 SEUIL_FINANCEMENT = 15
-POURCENTAGE_FAIBLE = 30  # pourcentage de projet n'ayant pas atteint le seuil de financement qu'on a mis en paramètre
+POURCENTAGE_FAIBLE = 60  # pourcentage de projet n'ayant pas atteint le seuil de financement qu'on a mis en paramètre
 NOMBRE_PROJETS_FAIBLE = int(NOMBRE_PROJETS * POURCENTAGE_FAIBLE / 100)
 NOMBRE_PROJETS_NORMAUX = NOMBRE_PROJETS - NOMBRE_PROJETS_FAIBLE
 JOURS_DEPUIS_LANCEMENT_MAX = 7  # projets lancés il y a moins de 7 jours
@@ -25,7 +25,7 @@ options.add_argument("--disable-gpu")
 options.add_argument("--no-sandbox")
 
 # initialisation
-uc_driver = uc.Chrome(options=options, use_subprocess=True)
+uc_driver = uc.Chrome(options=options, use_subprocess=True,  version_main=143)
 
 liens = []
 page = 1
