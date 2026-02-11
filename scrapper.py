@@ -221,7 +221,7 @@ def scrap(url, driver):
         # Scrap l'entête
         print("scrap entete et description")
         # Attends que la page charge (la description est toujours présente)
-        element = WebDriverWait(driver, 10).until(
+        element = WebDriverWait(driver, 25).until(
             EC.presence_of_element_located((By.ID, "react-campaign"))
         )
 
@@ -286,33 +286,46 @@ def scrap(url, driver):
         total_time = time.time() - start_time
         print("Projet collecté en "+ str(total_time) +"\n")
 
-    except Exception:
-        traceback.print_exc()
-        try:
-            os.makedirs("debug", exist_ok=True)
-            ts = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-            driver.save_screenshot(f"debug/fail-{ts}.png")
-            with open(f"debug/fail-{ts}.html", "w", encoding="utf-8") as f:
-                f.write(driver.page_source)
-            print(f"[DEBUG] Sauvegardé: debug/fail-{ts}.png et .html")
-        except Exception:
-            pass
+    except Exception as e:
+        project_name = ""
+        #On essaye de récuperer le nom via le titre
+        if driver.title:
+            project_name = driver.title.strip()
 
-        print("#### " + current["state"] + " ####")
+        #sinon via le json
+        if not project_name :
+            header = driver.find_elements(By.ID, "react-project-header")
+            if header:
+                jsondata = header[0].get_attribute("data-initial")
+                if jsondata:
+                    j = json.loads(jsondata)
+                    name_from_json = j.get("project", {}).get("name")
+                    if name_from_json:
+                        project_name = name_from_json
+
+        # Si toujours vide → on met l’URL
+        if not project_name:
+            project_name = url
+
+        print(f"[ERREUR] {project_name} | {url}")
+        print(f"{type(e).__name__}: {e}")
+        log_erreur(url, project_name, e)
+
         return 1, time.time() - start_time
 
 
+
     finally:
-        # Sauvegarde incrémentale
+        #Sauvegarde incrémentale
         if results:
             folder = "donnees_json"
             if not os.path.exists(folder):
                 os.makedirs(folder)
 
             file_path = os.path.join(folder, datetime.datetime.now().strftime("%d-%m-%Y") + ".json")
-
             data = []
-            # Si le fichier existe déjà, on charge son contenu
+
+            #Si le fichier existe déjà on charge son contenu
             if os.path.exists(file_path):
                 try:
                     with open(file_path, "r", encoding="utf-8") as f:
@@ -321,11 +334,9 @@ def scrap(url, driver):
                             data = [data]  # Sécurité si le fichier n'était pas une liste
                 except (json.JSONDecodeError, IOError):
                     data = []
-
-            # On ajoute le nouveau résultat
             data.append(results)
 
-            # On réécrit le fichier avec la liste mise à jour
+            #On réécrit le fichier avec la liste mise à jour
             with open(file_path, "w", encoding="utf-8") as fichier:
                 json.dump(data, fichier, indent=4, ensure_ascii=False)
             print(f"Projet sauvegardé dans {file_path}")
@@ -334,9 +345,25 @@ def scrap(url, driver):
     
     return 0, total_time
 
+
+#Fonction qui permet d'ajouter dans un fichier log les erreurs de scraping par projet
+def log_erreur(url: str, project_name: str, exc: BaseException):
+    try:
+        date_str = datetime.datetime.now().strftime("%d-%m-%Y")
+        log_dir = os.path.join("donnees_json", "logs_erreurs")
+        os.makedirs(log_dir, exist_ok=True)
+
+        log_file = os.path.join(log_dir, f"{date_str}_erreurs.txt")
+
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(
+                f"{project_name} | {url} | {type(exc).__name__}: {str(exc)}\n"
+            )
+    except Exception:
+        pass
+
+
 if __name__ == "__main__":
-    # initialisation
-    # config
     options = uc.ChromeOptions()
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--disable-gpu")

@@ -8,8 +8,8 @@ from random import randrange
 from scrapper import scrap
 import user_info
 
-# ===== CONFIG =====
-PROJETS_PAR_HEURE = 9
+
+PROJETS_PAR_HEURE = 10
 SECONDES_PAR_HEURE = 3600
 FICHIER_URLS = "Followed_Projects.txt"
 
