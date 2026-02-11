@@ -2,6 +2,7 @@
 # Main UI assembly
 # ============================================================================
 source("UI/styles.R")
+source("UI/ui_sentiment.R")
 source("UI/ui_dashboard.R")
 source("UI/ui_home.R")
 

@@ -47,6 +47,9 @@ dashboard_server <- function(input, output, session, selected_project_id) {
     
     shinyjs::runjs(sprintf("$('%s').addClass('active');", tab_ids[input$active_tab]))
     shinyjs::runjs(sprintf("$('%s').addClass('active');", content_ids[input$active_tab]))
+
+    # Trigger resize so plotly charts recalculate dimensions in newly visible tabs
+    shinyjs::runjs("setTimeout(function(){ window.dispatchEvent(new Event('resize')); }, 200);")
   })
   
   # Project name (breadcrumb)
@@ -190,4 +193,8 @@ dashboard_server <- function(input, output, session, selected_project_id) {
              margin = list(l = 60, r = 40, t = 20, b = 80)) %>%
       config(displayModeBar = FALSE)
   })
+  # ============================================================================
+  # CALL SENTIMENT SERVER MODULE
+  # ============================================================================
+  sentiment_server(input, output, session, current_project)
 }

@@ -1,5 +1,5 @@
 # ============================================================================
-# CSS Styles for the app
+# CSS Styles for the app - Version avec styles sentiment améliorés
 # ============================================================================
 app_styles <- function() {
   tags$head(
@@ -275,23 +275,39 @@ app_styles <- function() {
           font-weight: bold;
         }
 
-        .feedback-grid {
+        /* ============= SENTIMENT STYLES (NOUVEAU) ============= */
+        .sentiment-feedback-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 12px;
           margin-top: 15px;
         }
 
-        .feedback-item {
+        .sentiment-feedback-item {
           background: #F9FAFB;
           border-radius: 10px;
           padding: 15px;
           text-align: center;
         }
 
-        .feedback-item.positive { background: #E8F5E9; }
-        .feedback-item.neutral { background: #E3F2FD; }
-        .feedback-item.negative { background: #FFEBEE; }
+        /* ============= COMMUNICATION BARS (Sentiment) ============= */
+        .comm-bar-item {
+          margin-bottom: 12px;
+        }
+
+        .comm-bar-bg {
+          width: 100%%;
+          height: 8px;
+          background: #E5E7EB;
+          border-radius: 4px;
+          overflow: hidden;
+        }
+
+        .comm-bar-fill {
+          height: 100%%;
+          border-radius: 4px;
+          transition: width 0.4s ease;
+        }
       ",
                             colors$primary, colors$secondary,
                             colors$primary, colors$secondary,

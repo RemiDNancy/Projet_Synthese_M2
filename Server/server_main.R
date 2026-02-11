@@ -2,6 +2,7 @@
 # Main server function assembly
 # ============================================================================
 source("Server/server_home.R")
+source("Server/server_sentiment.R")
 source("Server/server_dashboard.R")
 
 server <- function(input, output, session) {
