@@ -87,7 +87,10 @@ home_server <- function(input, output, session, selected_project_id) {
   # Click on a project -> show detail view inline
   observeEvent(input$selected_project, {
     selected_project_id(input$selected_project)
-    shinyjs::hide("projects_list_view")
-    shinyjs::show("project_detail_view")
+    shinyjs::hide(id = "projects_list_view")
+    shinyjs::show(id = "project_detail_view")
   })
+
+
+
 }

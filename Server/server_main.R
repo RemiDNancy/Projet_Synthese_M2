@@ -5,12 +5,11 @@ source("Server/server_home.R")
 source("Server/server_dashboard.R")
 
 server <- function(input, output, session) {
-
+  
   # Global reactive values
   selected_project_id <- reactiveVal(1)  # Default: project 1
-  current_view <- reactiveVal("overview")
-
+  
   # Call sub-server functions
   home_server(input, output, session, selected_project_id)
-  dashboard_server(input, output, session, selected_project_id, current_view)
+  dashboard_server(input, output, session, selected_project_id)
 }

@@ -122,24 +122,80 @@ app_styles <- function() {
           box-shadow: 0 15px 40px rgba(0,0,0,0.15);
         }
 
+        /* ============= TAB NAVIGATION ============= */
+        .tab-navigation {
+          background: white;
+          border-radius: 16px;
+          padding: 16px;
+          margin-bottom: 24px;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+          display: flex;
+          gap: 8px;
+          overflow-x: auto;
+        }
+
+        .nav-tab {
+          padding: 12px 24px;
+          border-radius: 12px;
+          border: none;
+          font-weight: 600;
+          font-size: 15px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          background: #F3F4F6;
+          color: #6B7280;
+          white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+          background: #E5E7EB;
+          transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+          background: linear-gradient(135deg, %s 0%%, %s 100%%);
+          color: white;
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+          transform: scale(1.05);
+        }
+
+        .nav-tab i {
+          margin-right: 8px;
+        }
+
+        /* ============= TAB CONTENT ============= */
+        .dash-tab-content {
+          display: none;
+        }
+
+        .dash-tab-content.active {
+          display: block;
+          animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
         .stat-box {
           background: white;
           border-radius: 16px;
           padding: 25px;
           box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-          cursor: pointer;
-          transition: all 0.3s ease;
           height: 100%%;
+          margin-bottom: 20px;
         }
 
-        .stat-box:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-        }
-
-        .stat-box.active {
-          border: 3px solid %s;
-          box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+        .stat-box.ai-insights {
+          background: linear-gradient(135deg, #667EEA 0%%, #764BA2 100%%);
+          color: white;
         }
 
         .stat-title {
@@ -147,6 +203,12 @@ app_styles <- function() {
           font-weight: bold;
           color: %s;
           margin-bottom: 20px;
+          display: flex;
+          align-items: center;
+        }
+
+        .stat-box.ai-insights .stat-title {
+          color: white;
         }
 
         .mini-stat {
@@ -162,39 +224,46 @@ app_styles <- function() {
           transform: scale(1.05);
         }
 
+        /* Quick Stats Grid */
+        .quick-stats-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+
+        .quick-stat {
+          padding: 20px;
+          border-radius: 12px;
+          text-align: center;
+          transition: all 0.2s ease;
+        }
+
+        .quick-stat:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .quick-stat.green {
+          background: linear-gradient(135deg, #D1FAE5 0%%, #A7F3D0 100%%);
+        }
+
+        .quick-stat.blue {
+          background: linear-gradient(135deg, #DBEAFE 0%%, #BFDBFE 100%%);
+        }
+
+        .quick-stat.orange {
+          background: linear-gradient(135deg, #FEF3C7 0%%, #FDE68A 100%%);
+        }
+
+        .quick-stat.purple {
+          background: linear-gradient(135deg, #F3E8FF 0%%, #E9D5FF 100%%);
+        }
+
         .chart-container {
           background: white;
           border-radius: 16px;
           padding: 30px;
           box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .chart-title {
-          font-size: 28px;
-          font-weight: bold;
-          color: %s;
-          margin-bottom: 20px;
-        }
-
-        .btn-view {
-          padding: 10px 20px;
-          border-radius: 8px;
-          border: none;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          margin-right: 8px;
-        }
-
-        .btn-view.active {
-          background: %s;
-          color: white;
-          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-view:not(.active) {
-          background: #F3F4F6;
-          color: %s;
         }
 
         .status-badge {
@@ -224,21 +293,18 @@ app_styles <- function() {
         .feedback-item.neutral { background: #E3F2FD; }
         .feedback-item.negative { background: #FFEBEE; }
       ",
-                          colors$primary, colors$secondary,
-                          colors$primary, colors$secondary,
-                          colors$primary,
-                          colors$dark,
-                          colors$bg_light,
-                          colors$dark,
-                          colors$text_gray,
-                          colors$border,
-                          colors$dark,
-                          colors$primary,
-                          colors$dark,
-                          colors$dark,
-                          colors$primary,
-                          colors$text_gray,
-                          colors$live
+                            colors$primary, colors$secondary,
+                            colors$primary, colors$secondary,
+                            colors$primary,
+                            colors$dark,
+                            colors$bg_light,
+                            colors$dark,
+                            colors$text_gray,
+                            colors$border,
+                            colors$dark,
+                            colors$primary, colors$secondary,
+                            colors$dark,
+                            colors$live
     )))
   )
 }

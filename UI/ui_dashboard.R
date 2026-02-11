@@ -19,7 +19,7 @@ dashboard_content_ui <- function() {
              )
       )
     ),
-
+    
     # Project Header
     fluidRow(
       column(12,
@@ -68,91 +68,169 @@ dashboard_content_ui <- function() {
              )
       )
     ),
-
-    # Stats Cards
+    
+    # Navigation Tabs (NEW!)
     fluidRow(
-      column(6,
-             div(id = "overview-card", class = "stat-box",
-                 onclick = "Shiny.setInputValue('view_mode', 'overview', {priority: 'event'})",
-                 div(class = "stat-title", "Overview"),
-                 fluidRow(
-                   column(6, plotlyOutput("overview_pie", height = "220px")),
-                   column(6,
-                          div(class = "mini-stat",
-                              div(style = "display: flex; align-items: center; margin-bottom: 5px;",
-                                  icon("dollar-sign", style = "color: #667EEA; margin-right: 8px;"),
-                                  tags$span("Collected", style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
-                              ),
-                              div(style = "font-size: 28px; font-weight: bold; color: #667EEA;",
-                                  textOutput("project_collected", inline = TRUE))
-                          ),
-                          div(class = "mini-stat",
-                              div(style = "display: flex; align-items: center; margin-bottom: 5px;",
-                                  icon("bullseye", style = "color: #2C3E50; margin-right: 8px;"),
-                                  tags$span("Goal", style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
-                              ),
-                              div(style = "font-size: 22px; font-weight: bold; color: #2C3E50;",
-                                  textOutput("project_goal", inline = TRUE))
-                          ),
-                          div(class = "mini-stat",
-                              div(style = "display: flex; align-items: center; margin-bottom: 5px;",
-                                  icon("users", style = "color: #9B59B6; margin-right: 8px;"),
-                                  tags$span("Contributors", style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
-                              ),
-                              div(style = "font-size: 22px; font-weight: bold; color: #2C3E50;",
-                                  textOutput("project_backers", inline = TRUE))
-                          )
-                   )
-                 )
-             )
-      ),
-      column(6,
-             div(id = "sentiment-card", class = "stat-box",
-                 onclick = "Shiny.setInputValue('view_mode', 'sentiment', {priority: 'event'})",
-                 div(class = "stat-title", "Feedback"),
-                 plotlyOutput("sentiment_donut", height = "220px"),
-                 div(class = "feedback-grid",
-                     div(class = "feedback-item positive",
-                         div(style = "width: 16px; height: 16px; border-radius: 50%; background: #86EFAC; margin: 0 auto 8px;"),
-                         div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 3px;", "Positive"),
-                         div(style = "font-size: 20px; font-weight: bold; color: #059669;", "63%")
-                     ),
-                     div(class = "feedback-item neutral",
-                         div(style = "width: 16px; height: 16px; border-radius: 50%; background: #93C5FD; margin: 0 auto 8px;"),
-                         div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 3px;", "Neutral"),
-                         div(style = "font-size: 20px; font-weight: bold; color: #2563EB;", "22%")
-                     ),
-                     div(class = "feedback-item negative",
-                         div(style = "width: 16px; height: 16px; border-radius: 50%; background: #FCA5A5; margin: 0 auto 8px;"),
-                         div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 3px;", "Negative"),
-                         div(style = "font-size: 20px; font-weight: bold; color: #DC2626;", "15%")
-                     )
-                 )
+      column(12,
+             div(class = "tab-navigation",
+                 actionButton("tab_overview", 
+                              tagList(icon("chart-bar"), " Overview"),
+                              class = "nav-tab active",
+                              onclick = "Shiny.setInputValue('active_tab', 'overview', {priority: 'event'})"),
+                 actionButton("tab_sentiment",
+                              tagList(icon("comments"), " Sentiment"),
+                              class = "nav-tab",
+                              onclick = "Shiny.setInputValue('active_tab', 'sentiment', {priority: 'event'})"),
+                 actionButton("tab_rewards",
+                              tagList(icon("award"), " Rewards"),
+                              class = "nav-tab",
+                              onclick = "Shiny.setInputValue('active_tab', 'rewards', {priority: 'event'})"),
+                 actionButton("tab_creator",
+                              tagList(icon("user"), " Creator"),
+                              class = "nav-tab",
+                              onclick = "Shiny.setInputValue('active_tab', 'creator', {priority: 'event'})"),
+                 actionButton("tab_ai",
+                              tagList(icon("bolt"), " AI Insights"),
+                              class = "nav-tab",
+                              onclick = "Shiny.setInputValue('active_tab', 'ai', {priority: 'event'})")
              )
       )
     ),
-
-    # Chart Section
+    
+    # Tab Content
     fluidRow(
       column(12,
-             div(class = "chart-container",
+             # Overview Tab
+             div(id = "content_overview", class = "tab-content active",
                  fluidRow(
-                   column(8,
-                          div(
-                            icon("chart-line", style = "color: #667EEA; font-size: 24px; margin-right: 10px; vertical-align: middle;"),
-                            tags$span(textOutput("chart_title", inline = TRUE),
-                                      style = "font-size: 28px; font-weight: bold; color: #2C3E50; display: inline; vertical-align: middle;")
+                   column(6,
+                          div(class = "stat-box",
+                              div(class = "stat-title", 
+                                  icon("chart-bar", style = "color: #667EEA; margin-right: 10px;"),
+                                  "Funding Overview"),
+                              fluidRow(
+                                column(6, plotlyOutput("overview_pie", height = "220px")),
+                                column(6,
+                                       div(class = "mini-stat",
+                                           div(style = "display: flex; align-items: center; margin-bottom: 5px;",
+                                               icon("dollar-sign", style = "color: #667EEA; margin-right: 8px;"),
+                                               tags$span("Collected", style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
+                                           ),
+                                           div(style = "font-size: 28px; font-weight: bold; color: #667EEA;",
+                                               textOutput("project_collected", inline = TRUE))
+                                       ),
+                                       div(class = "mini-stat",
+                                           div(style = "display: flex; align-items: center; margin-bottom: 5px;",
+                                               icon("bullseye", style = "color: #2C3E50; margin-right: 8px;"),
+                                               tags$span("Goal", style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
+                                           ),
+                                           div(style = "font-size: 22px; font-weight: bold; color: #2C3E50;",
+                                               textOutput("project_goal", inline = TRUE))
+                                       ),
+                                       div(class = "mini-stat",
+                                           div(style = "display: flex; align-items: center; margin-bottom: 5px;",
+                                               icon("users", style = "color: #9B59B6; margin-right: 8px;"),
+                                               tags$span("Contributors", style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
+                                           ),
+                                           div(style = "font-size: 22px; font-weight: bold; color: #2C3E50;",
+                                               textOutput("project_backers", inline = TRUE))
+                                       )
+                                )
+                              )
                           )
                    ),
-                   column(4,
-                          div(style = "text-align: right;",
-                              actionButton("btn_overview", "Overview", class = "btn-view active"),
-                              actionButton("btn_sentiment", "Sentiment", class = "btn-view")
+                   column(6,
+                          div(class = "stat-box",
+                              div(class = "stat-title", "Quick Stats"),
+                              div(class = "quick-stats-grid",
+                                  div(class = "quick-stat green",
+                                      div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;", "Daily Average"),
+                                      div(style = "font-size: 24px; font-weight: bold; color: #059669;", "+$1,200")
+                                  ),
+                                  div(class = "quick-stat blue",
+                                      div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;", "Days Remaining"),
+                                      div(style = "font-size: 24px; font-weight: bold; color: #2563EB;", "18")
+                                  ),
+                                  div(class = "quick-stat orange",
+                                      div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;", "Funding Velocity"),
+                                      div(style = "font-size: 24px; font-weight: bold; color: #F39C12;", "Above Avg")
+                                  ),
+                                  div(class = "quick-stat purple",
+                                      div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;", "Backers Growth"),
+                                      div(style = "font-size: 24px; font-weight: bold; color: #9B59B6;", "+42 today")
+                                  )
+                              )
                           )
                    )
                  ),
-                 hr(style = "margin: 20px 0;"),
-                 plotlyOutput("main_chart", height = "450px")
+                 fluidRow(
+                   column(12,
+                          div(class = "chart-container",
+                              div(style = "margin-bottom: 20px;",
+                                  icon("chart-line", style = "color: #667EEA; font-size: 24px; margin-right: 10px; vertical-align: middle;"),
+                                  tags$span("Funding Progress",
+                                            style = "font-size: 28px; font-weight: bold; color: #2C3E50; display: inline; vertical-align: middle;")
+                              ),
+                              plotlyOutput("main_chart", height = "450px")
+                          )
+                   )
+                 )
+             ),
+             
+             # Sentiment Tab
+             div(id = "content_sentiment", class = "dash-tab-content",
+                 div(class = "stat-box",
+                     div(class = "stat-title",
+                         icon("comments", style = "color: #059669; margin-right: 10px;"),
+                         "Sentiment Analysis"),
+                     div(style = "text-align: center; padding: 60px; color: #95A5A6;",
+                         icon("comments", class = "fa-3x", style = "margin-bottom: 20px; opacity: 0.3;"),
+                         h3("Sentiment data coming soon"),
+                         p("This section will show sentiment analysis from project comments and updates.")
+                     )
+                 )
+             ),
+             
+             # Rewards Tab
+             div(id = "content_rewards", class = "dash-tab-content",
+                 div(class = "stat-box",
+                     div(class = "stat-title",
+                         icon("award", style = "color: #F39C12; margin-right: 10px;"),
+                         "Rewards Performance"),
+                     div(style = "text-align: center; padding: 60px; color: #95A5A6;",
+                         icon("award", class = "fa-3x", style = "margin-bottom: 20px; opacity: 0.3;"),
+                         h3("Rewards data coming soon"),
+                         p("This section will show performance metrics for different reward tiers.")
+                     )
+                 )
+             ),
+             
+             # Creator Tab
+             div(id = "content_creator", class = "dash-tab-content",
+                 div(class = "stat-box",
+                     div(class = "stat-title",
+                         icon("user", style = "color: #9B59B6; margin-right: 10px;"),
+                         "Creator Profile"),
+                     div(style = "text-align: center; padding: 60px; color: #95A5A6;",
+                         icon("user", class = "fa-3x", style = "margin-bottom: 20px; opacity: 0.3;"),
+                         h3("Creator information coming soon"),
+                         p("This section will show detailed creator statistics and update history.")
+                     )
+                 )
+             ),
+             
+             # AI Insights Tab
+             div(id = "content_ai", class = "dash-tab-content",
+                 div(class = "stat-box ai-insights",
+                     div(class = "stat-title",
+                         icon("bolt", style = "color: #F59E0B; margin-right: 10px;"),
+                         "AI-Powered Insights"),
+                     div(style = "text-align: center; padding: 60px; color: #95A5A6;",
+                         icon("bolt", class = "fa-3x", style = "margin-bottom: 20px; opacity: 0.3;"),
+                         h3("AI predictions coming soon"),
+                         p("This section will show AI-powered success predictions and recommendations.")
+                     )
+                 )
              )
       )
     )
