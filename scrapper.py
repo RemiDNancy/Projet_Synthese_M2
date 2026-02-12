@@ -211,10 +211,10 @@ def scrap(url, driver):
     start_time = time.time()
     total_time = 0
     results = {}
+    success = False
+
     try:
         print("Scraping project")
-
-        # Go to the page
         driver.get(url)
 
         ###########################################################################
@@ -231,12 +231,12 @@ def scrap(url, driver):
             scrap_entete(driver, results, current)
         else:
             results["head"] = "<p>No Head, project ended</p>"
-        
+
         scrap_description(driver, results, current)
-        
+
         ###########################################################################
 
-        # on fait une pause d'une durée aléatoire pour réduire les chances d'être perçu comme un bot
+        # pause aléatoire
         pause = random.uniform(TEMPS_PAUSE_MIN, TEMPS_PAUSE_MAX)
         time.sleep(pause)
 
@@ -247,53 +247,38 @@ def scrap(url, driver):
 
             if (key == "faq" or key == "updates") and skip:
                 continue
-        
-            #print("scrap : "+ str(key))
 
-            # Trouver l'onglet de la page et cliquer dessus
             driver.find_element(By.ID, key+"-emoji").click()
 
-            # Attendre jusqu'à 10 secondes que le contenue de la balise apparaisse (json de l'onglet terminé)
             WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, str(html[key][1])))
             )
 
-            # on fait une pause d'une durée aléatoire pour réduire les chances d'être perçu comme un bot
             pause = random.uniform(TEMPS_PAUSE_MIN, TEMPS_PAUSE_MAX)
             time.sleep(pause)
 
-            # Appel la fonction de scrap correspondante
             scrap_functions.get(key, scrap_comments)(driver, results, current)
 
-            # Mouvement de souris imittant un comportement humain 
             iframe = driver.find_element(By.ID, str(html[key][0]))
-            ActionChains(driver)\
-                .scroll_to_element(iframe)\
-                .perform()
-            
-            ActionChains(driver)\
-                .scroll_by_amount(0, random.randrange(0,30))\
-                .perform()
+            ActionChains(driver).scroll_to_element(iframe).perform()
+            ActionChains(driver).scroll_by_amount(0, random.randrange(0, 30)).perform()
+            ActionChains(driver).move_to_element_with_offset(
+                iframe, random.randrange(-50, 50), random.randrange(-50, 50)
+            ).perform()
+            ActionChains(driver).scroll_by_amount(0, random.randrange(100, 300)).perform()
 
-            ActionChains(driver) \
-                .move_to_element_with_offset(iframe, random.randrange(-50, 50), random.randrange(-50, 50)) \
-                .perform()
-            
-            ActionChains(driver)\
-                .scroll_by_amount(0, random.randrange(100,300))\
-                .perform()
-        
         total_time = time.time() - start_time
         print("Projet collecté en "+ str(total_time) +"\n")
 
+        success = True  # on ne sauvegarde que si on a réussi à scrap
+
     except Exception as e:
         project_name = ""
-        #On essaye de récuperer le nom via le titre
+
         if driver.title:
             project_name = driver.title.strip()
 
-        #sinon via le json
-        if not project_name :
+        if not project_name:
             header = driver.find_elements(By.ID, "react-project-header")
             if header:
                 jsondata = header[0].get_attribute("data-initial")
@@ -303,7 +288,6 @@ def scrap(url, driver):
                     if name_from_json:
                         project_name = name_from_json
 
-        # Si toujours vide → on met l’URL
         if not project_name:
             project_name = url
 
@@ -313,11 +297,9 @@ def scrap(url, driver):
 
         return 1, time.time() - start_time
 
-
-
     finally:
-        #Sauvegarde incrémentale
-        if results:
+        #sauvegarde  si succès
+        if success and results:
             folder = "donnees_json"
             if not os.path.exists(folder):
                 os.makedirs(folder)
@@ -325,29 +307,30 @@ def scrap(url, driver):
             file_path = os.path.join(folder, datetime.datetime.now().strftime("%d-%m-%Y") + ".json")
             data = []
 
-            #Si le fichier existe déjà on charge son contenu
             if os.path.exists(file_path):
                 try:
                     with open(file_path, "r", encoding="utf-8") as f:
                         data = json.load(f)
                         if not isinstance(data, list):
-                            data = [data]  # Sécurité si le fichier n'était pas une liste
+                            data = [data]
                 except (json.JSONDecodeError, IOError):
                     data = []
+
             data.append(results)
 
-            #On réécrit le fichier avec la liste mise à jour
             with open(file_path, "w", encoding="utf-8") as fichier:
                 json.dump(data, fichier, indent=4, ensure_ascii=False)
             print(f"Projet sauvegardé dans {file_path}")
         else:
-            print("Projet non collecté, rien à sauvegarder\n")
-    
+            if not success:
+                print("Échec scrap -> rien à sauvegarder\n")
+
     return 0, total_time
 
 
+
 #Fonction qui permet d'ajouter dans un fichier log les erreurs de scraping par projet
-def log_erreur(url: str, project_name: str, exc: BaseException):
+def log_erreur(url: str, project_name: str, exc: BaseException = None, retry_success: bool = False):
     try:
         date_str = datetime.datetime.now().strftime("%d-%m-%Y")
         log_dir = os.path.join("donnees_json", "logs_erreurs")
@@ -356,11 +339,17 @@ def log_erreur(url: str, project_name: str, exc: BaseException):
         log_file = os.path.join(log_dir, f"{date_str}_erreurs.txt")
 
         with open(log_file, "a", encoding="utf-8") as f:
-            f.write(
-                f"{project_name} | {url} | {type(exc).__name__}: {str(exc)}\n"
-            )
+            if retry_success:
+                f.write(
+                    f"RETRY SUCCESS | {project_name} | {url}\n"
+                )
+            elif exc:
+                f.write(
+                    f"{project_name} | {url} | {type(exc).__name__}: {str(exc)}\n"
+                )
     except Exception:
         pass
+
 
 
 if __name__ == "__main__":
