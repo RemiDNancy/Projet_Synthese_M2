@@ -9,9 +9,11 @@ from scrapper import scrap
 import user_info
 
 
-PROJETS_PAR_HEURE = 10
+PROJETS_PAR_HEURE = 9
 SECONDES_PAR_HEURE = 3600
 FICHIER_URLS = "Followed_Projects.txt"
+
+ATTENTE_APRES_FIN_SECONDES = 2000  #environ 33 minutes
 
 USER_AGENTS = [
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
@@ -23,10 +25,29 @@ USER_AGENTS = [
 ]
 
 
+def new_driver(user_agent: str):
+    options = uc.ChromeOptions()
+    options.binary_location = user_info.chrome_path
+
+    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--remote-debugging-port=0")
+    options.add_argument(f"--user-agent={user_agent}")
+
+    driver = uc.Chrome(
+        options=options,
+        version_main=144,
+        use_subprocess=True,
+        headless=False
+    )
+    return driver
+
 
 if __name__ == "__main__":
 
-    #reset json du jour s'il existe
+    # reset json du jour s'il existe
     dossier_json = "donnees_json"
     os.makedirs(dossier_json, exist_ok=True)
 
@@ -39,7 +60,7 @@ if __name__ == "__main__":
     else:
         print(f"[INFO] Aucun fichier JSON existant pour aujourd'hui")
 
-    #url
+    # url
     with open(FICHIER_URLS, "r", encoding="utf-8") as f:
         urls = [l.strip() for l in f if l.strip()]
 
@@ -47,37 +68,20 @@ if __name__ == "__main__":
     scrappedproject = 0
     totaltime = 0
 
-    #traitement par batch (PROJETS_PAR_HEURE / heure)
+    # traitement par batch (PROJETS_PAR_HEURE / heure)
     for batch_start in range(0, len(urls), PROJETS_PAR_HEURE):
 
         batch = urls[batch_start: batch_start + PROJETS_PAR_HEURE]
         batch_start_time = time.time()
 
-        #user agent
+        # user agent
         current_user_agent = USER_AGENTS[randrange(len(USER_AGENTS))]
         print(f"\n[INFO] Nouveau batch ({len(batch)} projets)")
         print(f"[INFO] User-Agent : {current_user_agent}")
 
-        #chrome
-        options = uc.ChromeOptions()
-        options.binary_location = user_info.chrome_path
+        driver = new_driver(current_user_agent)
 
-        options.add_argument("--window-size=1920,1080")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--remote-debugging-port=0")
-        options.add_argument(f"--user-agent={current_user_agent}")
-
-        #driver
-        driver = uc.Chrome(
-            options=options,
-            version_main=144,
-            use_subprocess=True,
-            headless=False
-        )
-
-        #scrap du batch
+        # scrap du batch
         for url in batch:
             totalproject += 1
             print(f"[SCRAP] {url}")
@@ -90,10 +94,13 @@ if __name__ == "__main__":
             else:
                 print("[WARN] Échec du scrap")
 
-        driver.quit()
+        try:
+            driver.quit()
+        except Exception:
+            pass
         print("[INFO] Navigateur fermé")
 
-        #pause jusqu'à l'heure suivante
+        # pause jusqu'à l'heure suivante
         elapsed = time.time() - batch_start_time
         remaining = SECONDES_PAR_HEURE - elapsed
 
@@ -103,7 +110,6 @@ if __name__ == "__main__":
         else:
             print("[WARN] Batch plus long qu’une heure, enchaînement immédiat")
 
-
     print("\n===== FIN SCRAP DU JOUR =====")
     print(f"Total projets : {totalproject}")
     print(f"Succès        : {scrappedproject}")
@@ -111,3 +117,54 @@ if __name__ == "__main__":
 
     if scrappedproject > 0:
         print(f"Moyenne / projet : {totaltime / scrappedproject:.2f} s")
+
+    # =========================
+    # RETRY A LA FIN (UNE FOIS)
+    # =========================
+    date_str = datetime.datetime.now().strftime("%d-%m-%Y")
+    retry_file = os.path.join("donnees_json", "logs_erreurs", f"{date_str}_retry_urls.txt")
+
+    if os.path.exists(retry_file):
+        with open(retry_file, "r", encoding="utf-8") as f:
+            retry_urls = [l.strip() for l in f if l.strip()]
+
+        # éviter doublons
+        retry_urls = list(dict.fromkeys(retry_urls))
+
+        if retry_urls:
+            print(f"\n[INFO] {len(retry_urls)} projets à retenter")
+            print(f"[INFO] Attente {ATTENTE_APRES_FIN_SECONDES}s (30 min) avant retry...")
+            time.sleep(ATTENTE_APRES_FIN_SECONDES)
+
+            # nouveau driver avec nouvel agent
+            current_user_agent = USER_AGENTS[randrange(len(USER_AGENTS))]
+            print(f"[INFO] Retry fin de journée avec User-Agent : {current_user_agent}")
+            driver = new_driver(current_user_agent)
+
+            ok_retry = 0
+            for url in retry_urls:
+                print(f"[RETRY] {url}")
+                x, y = scrap(url, driver)
+                totaltime += y
+                if x == 0:
+                    ok_retry += 1
+                else:
+                    print("[WARN] Retry échoué")
+
+            try:
+                driver.quit()
+            except Exception:
+                pass
+            print(f"[INFO] Retry fin de journée : {ok_retry}/{len(retry_urls)} réussis")
+
+            #on supprime le fichier de retry une fois traité
+            try:
+                os.remove(retry_file)
+                print("[INFO] Fichier retry supprimé")
+            except Exception:
+                print("[WARN] Impossible de supprimer le fichier retry")
+
+        else:
+            print("[INFO] Fichier retry présent mais vide")
+    else:
+        print("[INFO] Aucun retry à faire (pas de fichier retry)")

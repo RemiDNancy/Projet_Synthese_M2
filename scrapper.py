@@ -310,6 +310,7 @@ def scrap(url, driver):
         print(f"[ERREUR] {project_name} | {url}")
         print(f"{type(e).__name__}: {e}")
         log_erreur(url, project_name, e)
+        log_retry_url(url)
 
         return 1, time.time() - start_time
 
@@ -361,6 +362,21 @@ def log_erreur(url: str, project_name: str, exc: BaseException):
             )
     except Exception:
         pass
+
+
+def log_retry_url(url: str):
+    try:
+        date_str = datetime.datetime.now().strftime("%d-%m-%Y")
+        log_dir = os.path.join("donnees_json", "logs_erreurs")
+        os.makedirs(log_dir, exist_ok=True)
+
+        retry_file = os.path.join(log_dir, f"{date_str}_retry_urls.txt")
+
+        with open(retry_file, "a", encoding="utf-8") as f:
+            f.write(url + "\n")
+    except Exception:
+        pass
+
 
 
 if __name__ == "__main__":
