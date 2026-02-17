@@ -1,0 +1,79 @@
+Un instant… | https://www.kickstarter.com/projects/lastofitskindtarot/the-pearlescent-tarot-charms-and-quest | TimeoutException: Message: 
+Stacktrace:
+#0 0x561f809efa4a <unknown>
+#1 0x561f804086a2 <unknown>
+#2 0x561f8045da8d <unknown>
+#3 0x561f8045dcd1 <unknown>
+#4 0x561f804a95c4 <unknown>
+#5 0x561f804a67f0 <unknown>
+#6 0x561f8044f8b2 <unknown>
+#7 0x561f804506a1 <unknown>
+#8 0x561f809b58a9 <unknown>
+#9 0x561f809b87b1 <unknown>
+#10 0x561f809a1ea9 <unknown>
+#11 0x561f809b936e <unknown>
+#12 0x561f80988410 <unknown>
+#13 0x561f809dd0c8 <unknown>
+#14 0x561f809dd29b <unknown>
+#15 0x561f809eedb8 <unknown>
+#16 0x7f2048b23b7b <unknown>
+
+The Firelight Isle: Complete Trilogy by Paul Duffield — Kickstarter | https://www.kickstarter.com/projects/paulduffield/the-firelight-isle-volumes-1-3 | WebDriverException: Message: unknown error: bad inspector message: {"error":{"code":-32700,"message":"JSON: invalid token at position 0"}}
+  (Session info: chrome=144.0.7559.132)
+Stacktrace:
+#0 0x55f11d829a4a <unknown>
+#1 0x55f11d2426a2 <unknown>
+#2 0x55f11d22a5b0 <unknown>
+#3 0x55f11d229de5 <unknown>
+#4 0x55f11d229996 <unknown>
+#5 0x55f11d2274a1 <unknown>
+#6 0x55f11d227e2f <unknown>
+#7 0x55f11d2491d1 <unknown>
+#8 0x55f11d24c039 <unknown>
+#9 0x55f11d24c0e3 <unknown>
+#10 0x55f11d297469 <unknown>
+#11 0x55f11d297cd1 <unknown>
+#12 0x55f11d28b3f6 <unknown>
+#13 0x55f11d28b2d7 <unknown>
+#14 0x55f11d2e07f0 <unknown>
+#15 0x55f11d2898b2 <unknown>
+#16 0x55f11d28a6a1 <unknown>
+#17 0x55f11d7ef8a9 <unknown>
+#18 0x55f11d7f27b1 <unknown>
+#19 0x55f11d7dbea9 <unknown>
+#20 0x55f11d7f336e <unknown>
+#21 0x55f11d7c2410 <unknown>
+#22 0x55f11d8170c8 <unknown>
+#23 0x55f11d81729b <unknown>
+#24 0x55f11d828db8 <unknown>
+#25 0x7f996536ab7b <unknown>
+
+I FEEL DOOMED! Volume 1 by Joe Karg — Kickstarter | https://www.kickstarter.com/projects/dearbernadette/i-feel-doomed | WebDriverException: Message: unknown error: bad inspector message: {"error":{"code":-32700,"message":"JSON: invalid token at position 0"}}
+  (Session info: chrome=144.0.7559.132)
+Stacktrace:
+#0 0x55f11d829a4a <unknown>
+#1 0x55f11d2426a2 <unknown>
+#2 0x55f11d22a5b0 <unknown>
+#3 0x55f11d229de5 <unknown>
+#4 0x55f11d229996 <unknown>
+#5 0x55f11d2274a1 <unknown>
+#6 0x55f11d227e2f <unknown>
+#7 0x55f11d2491d1 <unknown>
+#8 0x55f11d24c039 <unknown>
+#9 0x55f11d24c0e3 <unknown>
+#10 0x55f11d297469 <unknown>
+#11 0x55f11d297cd1 <unknown>
+#12 0x55f11d2e35c4 <unknown>
+#13 0x55f11d2e07f0 <unknown>
+#14 0x55f11d2898b2 <unknown>
+#15 0x55f11d28a6a1 <unknown>
+#16 0x55f11d7ef8a9 <unknown>
+#17 0x55f11d7f27b1 <unknown>
+#18 0x55f11d7dbea9 <unknown>
+#19 0x55f11d7f336e <unknown>
+#20 0x55f11d7c2410 <unknown>
+#21 0x55f11d8170c8 <unknown>
+#22 0x55f11d81729b <unknown>
+#23 0x55f11d828db8 <unknown>
+#24 0x7f996536ab7b <unknown>
+
