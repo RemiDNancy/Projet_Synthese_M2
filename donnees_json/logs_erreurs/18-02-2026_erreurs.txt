@@ -1,0 +1,20 @@
+Un instant… | https://www.kickstarter.com/projects/allerscan/allergy-vegan-and-cruelty-free-scan-app | TimeoutException: Message: 
+Stacktrace:
+#0 0x55ca58dd9a4a <unknown>
+#1 0x55ca587f26a2 <unknown>
+#2 0x55ca58847a8d <unknown>
+#3 0x55ca58847cd1 <unknown>
+#4 0x55ca588935c4 <unknown>
+#5 0x55ca588907f0 <unknown>
+#6 0x55ca588398b2 <unknown>
+#7 0x55ca5883a6a1 <unknown>
+#8 0x55ca58d9f8a9 <unknown>
+#9 0x55ca58da27b1 <unknown>
+#10 0x55ca58d8bea9 <unknown>
+#11 0x55ca58da336e <unknown>
+#12 0x55ca58d72410 <unknown>
+#13 0x55ca58dc70c8 <unknown>
+#14 0x55ca58dc729b <unknown>
+#15 0x55ca58dd8db8 <unknown>
+#16 0x7f1b2c885b7b <unknown>
+
