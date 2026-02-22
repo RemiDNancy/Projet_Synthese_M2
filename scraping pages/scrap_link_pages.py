@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import os
 import undetected_chromedriver as uc
 from bs4 import BeautifulSoup
 import html
@@ -32,14 +32,28 @@ CATEGORIES = [
     ("Technologie", "https://www.kickstarter.com/discover/categories/technology"),
 ]
 
-# config
+# config chrome
 options = uc.ChromeOptions()
 options.add_argument("--window-size=1920,1080")
 options.add_argument("--disable-gpu")
 options.add_argument("--no-sandbox")
 
-# initialisation
-uc_driver = uc.Chrome(options=options, use_subprocess=True, version_main=143)
+uc_driver = uc.Chrome(options=options, use_subprocess=True, version_main=144)
+
+
+
+# OUTILS
+def charger_liens_existants(fichier):
+    """Charge les liens déjà présents pour éviter les doublons."""
+    liens = set()
+    if os.path.exists(fichier):
+        with open(fichier, "r", encoding="utf-8") as f:
+            for ligne in f:
+                lien = ligne.strip()
+                if lien:
+                    liens.add(lien)
+    return liens
+
 
 def pause_aleatoire():
     time.sleep(random.uniform(TEMPS_PAUSE_MIN, TEMPS_PAUSE_MAX))
@@ -82,6 +96,7 @@ def extraire_projet(carte):
         return None
 
 
+#SCRAPER LIENS
 def collecter_projets_categorie(nom_categorie, url_categorie, liens_deja_vus):
     liens = []
     nb_faibles = 0
@@ -103,7 +118,7 @@ def collecter_projets_categorie(nom_categorie, url_categorie, liens_deja_vus):
             pages_sans_resultat += 1
             if pages_sans_resultat >= 3 and contrainte_7_jours:
                 contrainte_7_jours = False
-                print(f"[{nom_categorie}] 3 pages sans résultat, on enlève la contrainte des 7 jours\n")
+                print(f"[{nom_categorie}] 3 pages sans résultat, suppression contrainte 7 jours\n")
                 pages_sans_resultat = 0
                 page = 1
                 continue
@@ -120,6 +135,7 @@ def collecter_projets_categorie(nom_categorie, url_categorie, liens_deja_vus):
             if not projet or not projet["lien"]:
                 continue
 
+            # évite doublons fichier + run
             if projet["lien"] in liens_deja_vus:
                 continue
 
@@ -127,41 +143,34 @@ def collecter_projets_categorie(nom_categorie, url_categorie, liens_deja_vus):
             if contrainte_7_jours and jours > JOURS_DEPUIS_LANCEMENT_MAX:
                 continue
 
+            # faible financement
             if projet["pourcentage"] <= SEUIL_FINANCEMENT:
                 if nb_faibles >= NOMBRE_PROJETS_FAIBLE:
                     continue
                 nb_faibles += 1
-                liens.append(projet["lien"])
-                liens_deja_vus.add(projet["lien"])
-                ajouts_sur_page += 1
-                if contrainte_7_jours:
-                    print(f"    FAIBLE {projet['nom']} - {projet['pourcentage']}% - lancé il y a {jours}j")
-                else:
-                    print(f"    FAIBLE {projet['nom']} - {projet['pourcentage']}%")
 
             else:
                 if nb_normaux >= NOMBRE_PROJETS_NORMAUX:
                     continue
                 nb_normaux += 1
-                liens.append(projet["lien"])
-                liens_deja_vus.add(projet["lien"])
-                ajouts_sur_page += 1
-                if contrainte_7_jours:
-                    print(f"    NORMAL {projet['nom']} - {projet['pourcentage']}% - lancé il y a {jours}j")
-                else:
-                    print(f"    NORMAL {projet['nom']} - {projet['pourcentage']}%")
-
-                # dès que le quota de normaux est atteint on passe en newest
                 if nb_normaux >= NOMBRE_PROJETS_NORMAUX:
                     mode_newest = True
                     page = 1
-                    break
+
+            liens.append(projet["lien"])
+            liens_deja_vus.add(projet["lien"])
+            ajouts_sur_page += 1
+
+            print(
+                f"    {projet['nom']} - {projet['pourcentage']}% "
+                + (f"- {jours}j" if contrainte_7_jours else "")
+            )
 
         if ajouts_sur_page == 0:
             pages_sans_resultat += 1
             if pages_sans_resultat >= 3 and contrainte_7_jours:
                 contrainte_7_jours = False
-                print(f"[{nom_categorie}] 3 pages sans résultat, on enlève la contrainte des 7 jours\n")
+                print(f"[{nom_categorie}] suppression contrainte 7 jours\n")
                 pages_sans_resultat = 0
                 page = 1
                 continue
@@ -170,13 +179,14 @@ def collecter_projets_categorie(nom_categorie, url_categorie, liens_deja_vus):
 
         page += 1
 
-    print(f"[{nom_categorie}] collecté : {len(liens)} ({nb_faibles} faibles, {nb_normaux} normaux)\n")
+    print(f"[{nom_categorie}] collecté : {len(liens)}\n")
     return liens
 
 
-# exécution
+#EXECUTION
 liens_final = []
-liens_vus = set()
+liens_vus = charger_liens_existants(FICHIER_SORTIE)
+print(f"{len(liens_vus)} liens déjà présents dans le fichier\n")
 
 try:
     for nom, url in CATEGORIES:
@@ -186,11 +196,13 @@ try:
 finally:
     uc_driver.quit()
 
-# sauvegarde
+
+#SAUVEGARDE
 if liens_final:
-    with open(FICHIER_SORTIE, "w", encoding="utf-8") as f:
+    with open(FICHIER_SORTIE, "a", encoding="utf-8") as f:
         for lien in liens_final:
             f.write(lien + "\n")
-    print(f"{len(liens_final)} liens enregistrés dans {FICHIER_SORTIE}")
+
+    print(f"{len(liens_final)} nouveaux liens ajoutés dans {FICHIER_SORTIE}")
 else:
-    print("Aucun lien collecté")
+    print("Aucun nouveau lien trouvé")
