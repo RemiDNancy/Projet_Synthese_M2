@@ -1,0 +1,29 @@
+https://www.kickstarter.com/projects/angelaraincatcher/the-well-of-mimir-rune-cards | https://www.kickstarter.com/projects/angelaraincatcher/the-well-of-mimir-rune-cards | InvalidSessionIdException: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: Unable to receive message from renderer
+  (Session info: chrome=144.0.7559.132); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+#0 0x555b99feea4a <unknown>
+#1 0x555b99a076a2 <unknown>
+#2 0x555b999eed87 <unknown>
+#3 0x555b999ee996 <unknown>
+#4 0x555b999ec4a1 <unknown>
+#5 0x555b999eccf0 <unknown>
+#6 0x555b99a0b08d <unknown>
+#7 0x555b99aa646b <unknown>
+#8 0x555b99aa57f0 <unknown>
+#9 0x555b99a4e8b2 <unknown>
+#10 0x555b99a4f6a1 <unknown>
+#11 0x555b99fb48a9 <unknown>
+#12 0x555b99fb77b1 <unknown>
+#13 0x555b99fa0ea9 <unknown>
+#14 0x555b99fb836e <unknown>
+#15 0x555b99f87410 <unknown>
+#16 0x555b99fdc0c8 <unknown>
+#17 0x555b99fdc29b <unknown>
+#18 0x555b99feddb8 <unknown>
+#19 0x7f57d78ebb7b <unknown>
+
+https://www.kickstarter.com/projects/838404187/singularity-horror-novel-grafic-interactive | https://www.kickstarter.com/projects/838404187/singularity-horror-novel-grafic-interactive | WebDriverException: Message: tab crashed
+  (Session info: chrome=144.0.7559.132)
+
+RETRY SUCCESS | Singularity: Horror Novel Grafic- Interactive by Angel SEVEN — Kickstarter | https://www.kickstarter.com/projects/838404187/singularity-horror-novel-grafic-interactive
