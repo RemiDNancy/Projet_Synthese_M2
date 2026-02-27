@@ -203,8 +203,32 @@ for file_data in all_json_data:
 
             # enlève devise du prix
 
-            price_str = r.get("price", "0")
-            price = float(re.sub(r"[^\d.]", "", price_str)) if price_str else 0
+            price_str = r.get("price")
+
+            try:
+                if not price_str:
+                    price = 0
+                else:
+                    clean_price = re.sub(r"[^\d,\.]", "", str(price_str))
+
+                    # format européen 12,50
+                    if clean_price.count(",") == 1 and clean_price.count(".") == 0:
+                        clean_price = clean_price.replace(",", ".")
+
+                    # format 1,299.00
+                    elif clean_price.count(".") == 1 and clean_price.count(",") >= 1:
+                        clean_price = clean_price.replace(",", "")
+
+                    # cas bizarre avec plusieurs points
+                    elif clean_price.count(".") > 1:
+                        parts = clean_price.split(".")
+                        clean_price = parts[0] + "." + "".join(parts[1:])
+
+                    price = float(clean_price) if clean_price else 0
+
+            except Exception:
+                print("Erreur conversion prix :", price_str)
+                price = 0
 
             delivery = r.get("delivery")
             if delivery:
