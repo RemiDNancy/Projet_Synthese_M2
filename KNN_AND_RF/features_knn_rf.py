@@ -30,6 +30,7 @@ def extract_knn_rf_features(scrap_date=None):
         pe.backers_count,
         pe.percent_funded,
         pe.updates_count,
+        pe.current_state,
         DATEDIFF(pe.scrap_date, p.created_at) as days_since_launch
         
     FROM PROJECT_EVOLUTION pe
@@ -53,7 +54,8 @@ def extract_knn_rf_features(scrap_date=None):
         pe.pledged_amount,
         pe.backers_count,
         pe.percent_funded,
-        pe.updates_count
+        pe.updates_count,
+        pe.current_state;
     """
     
     date_filter = f"AND pe.scrap_date = '{scrap_date}'" if scrap_date else ""
