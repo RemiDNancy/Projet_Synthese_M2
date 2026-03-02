@@ -20,6 +20,7 @@ temporal_features = [
     'pledged_amount',
     'backers_count',
     'updates_count',
+    'percent_funded',
     'days_since_launch',
     'funding_velocity'
 ]
@@ -57,7 +58,6 @@ for project_id, group in df.sort_values('scrap_date').groupby('project_id'):
     # Keep useful projects
     if not live:
         for feature in temporal_features:
-            if feature == 'current_state' or feature == 'percent_funded': continue  # Ne pas entraîner le knn là dessus
             time_series_dict[feature][project_id] = group[feature].values
         # Extraire les features non temporelles (une seule val par projet)
         static_values = group[static_features].iloc[0].values.reshape(1, -1)
