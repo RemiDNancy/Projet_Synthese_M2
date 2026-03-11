@@ -58,7 +58,7 @@ home_server <- function(input, output, session, selected_project_id) {
                  onclick = sprintf("Shiny.setInputValue('selected_project', %d, {priority: 'event'})",
                                    project$project_id),
                  tags$img(src = project$image_url,
-                          style = "width: 80px; height: 80px; border-radius: 8px; object-fit: cover; margin-bottom: 10px;"),
+                          style = "width: 120px; height: 120px; border-radius: 8px; object-fit: cover; margin-bottom: 10px;"),
                  div(class = "project-title", project$title),
                  div(class = "project-category", project$category),
                  div(class = "project-status", style = sprintf("color: %s;", status_color), project$status),

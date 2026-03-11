@@ -100,10 +100,20 @@ sentiment_tab_ui <- function() {
       fluidRow(
         column(12,
                div(class = "chart-container",
-                   div(style = "margin-bottom: 20px;",
-                       icon("chart-area", style = "color: #667EEA; font-size: 24px; margin-right: 10px; vertical-align: middle;"),
-                       tags$span("Sentiment Evolution",
-                                 style = "font-size: 28px; font-weight: bold; color: #2C3E50; display: inline; vertical-align: middle;")
+                   div(style = "display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;",
+                       div(
+                           icon("chart-area", style = "color: #667EEA; font-size: 24px; margin-right: 10px; vertical-align: middle;"),
+                           tags$span("Sentiment Evolution",
+                                     style = "font-size: 28px; font-weight: bold; color: #2C3E50; display: inline; vertical-align: middle;")
+                       ),
+                       div(class = "zoom-btn-row", style = "margin-bottom: 0;",
+                           tags$button(class = "zoom-btn", title = "Zoom In",
+                                       onclick = "plotZoomIn('sentiment_evolution_chart')",
+                                       icon("search-plus")),
+                           tags$button(class = "zoom-btn", title = "Zoom Out",
+                                       onclick = "plotZoomOut('sentiment_evolution_chart')",
+                                       icon("search-minus"))
+                       )
                    ),
                    plotlyOutput("sentiment_evolution_chart", height = "400px")
                )

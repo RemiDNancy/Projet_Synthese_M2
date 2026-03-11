@@ -70,7 +70,7 @@ dashboard_server <- function(input, output, session, selected_project_id) {
     if (!is.null(p)) {
       tags$img(
         src = p$image_url,
-        style = "width: 128px; height: 192px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.2);"
+        style = "width: 180px; height: 240px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.2);"
       )
     }
   })
@@ -197,4 +197,17 @@ dashboard_server <- function(input, output, session, selected_project_id) {
   # CALL SENTIMENT SERVER MODULE
   # ============================================================================
   sentiment_server(input, output, session, current_project)
+  # ============================================================================
+  # CALL REWARDS SERVER MODULE
+  # ============================================================================
+  rewards_server(input, output, session, current_project)
+  # ============================================================================
+  # CALL CREATOR SERVER MODULE
+  # ============================================================================
+  creator_server(input, output, session, current_project)
+  
+  # ============================================================================
+  # CALL AI SERVER MODULE
+  # ============================================================================
+  ai_server(input, output, session, current_project)
 }

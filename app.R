@@ -13,12 +13,14 @@ library(plotly)
 library(dplyr)
 library(lubridate)
 library(shinyjs)
-library(jsonlite)
+library(DBI)
+library(RMySQL)
 
 # ============================================================================
-# Source modules
+# Source modules  
 # ============================================================================
-source("Server/config.R")
+source("Server/db.R")          
+source("Server/config.R")      
 source("Server/functions.R")
 source("UI/ui_main.R")
 source("Server/server_main.R")

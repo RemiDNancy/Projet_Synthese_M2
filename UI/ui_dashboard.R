@@ -141,60 +141,24 @@ overview_tab_ui <- function() {
       fluidRow(
         column(12,
                div(class = "chart-container",
-                   div(style = "margin-bottom: 20px;",
-                       icon("chart-line", style = "color: #667EEA; font-size: 24px; margin-right: 10px; vertical-align: middle;"),
-                       tags$span("Funding Progress",
-                                 style = "font-size: 28px; font-weight: bold; color: #2C3E50; display: inline; vertical-align: middle;")
+                   div(style = "display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;",
+                       div(
+                           icon("chart-line", style = "color: #667EEA; font-size: 24px; margin-right: 10px; vertical-align: middle;"),
+                           tags$span("Funding Progress",
+                                     style = "font-size: 28px; font-weight: bold; color: #2C3E50; display: inline; vertical-align: middle;")
+                       ),
+                       div(class = "zoom-btn-row", style = "margin-bottom: 0;",
+                           tags$button(class = "zoom-btn", title = "Zoom In",
+                                       onclick = "plotZoomIn('main_chart')",
+                                       icon("search-plus")),
+                           tags$button(class = "zoom-btn", title = "Zoom Out",
+                                       onclick = "plotZoomOut('main_chart')",
+                                       icon("search-minus"))
+                       )
                    ),
                    plotlyOutput("main_chart", height = "450px")
                )
         )
-      )
-  )
-}
-
-# --- Placeholder Tabs ---
-rewards_tab_ui <- function() {
-  div(id = "content_rewards", class = "dash-tab-content",
-      div(class = "stat-box",
-          div(class = "stat-title",
-              icon("award", style = "color: #F39C12; margin-right: 10px;"),
-              "Rewards Performance"),
-          div(style = "text-align: center; padding: 60px; color: #95A5A6;",
-              icon("award", class = "fa-3x", style = "margin-bottom: 20px; opacity: 0.3;"),
-              h3("Rewards data coming soon"),
-              p("This section will show performance metrics for different reward tiers.")
-          )
-      )
-  )
-}
-
-creator_tab_ui <- function() {
-  div(id = "content_creator", class = "dash-tab-content",
-      div(class = "stat-box",
-          div(class = "stat-title",
-              icon("user", style = "color: #9B59B6; margin-right: 10px;"),
-              "Creator Profile"),
-          div(style = "text-align: center; padding: 60px; color: #95A5A6;",
-              icon("user", class = "fa-3x", style = "margin-bottom: 20px; opacity: 0.3;"),
-              h3("Creator information coming soon"),
-              p("This section will show detailed creator statistics and update history.")
-          )
-      )
-  )
-}
-
-ai_tab_ui <- function() {
-  div(id = "content_ai", class = "dash-tab-content",
-      div(class = "stat-box ai-insights",
-          div(class = "stat-title",
-              icon("bolt", style = "color: #F59E0B; margin-right: 10px;"),
-              "AI-Powered Insights"),
-          div(style = "text-align: center; padding: 60px; color: rgba(255,255,255,0.7);",
-              icon("bolt", class = "fa-3x", style = "margin-bottom: 20px; opacity: 0.3;"),
-              h3("AI predictions coming soon"),
-              p("This section will show AI-powered success predictions and recommendations.")
-          )
       )
   )
 }

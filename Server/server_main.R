@@ -3,7 +3,11 @@
 # ============================================================================
 source("Server/server_home.R")
 source("Server/server_sentiment.R")
+source("Server/server_reward.R")
+source("Server/server_creator.R")
 source("Server/server_dashboard.R")
+source("Server/server_AiInsights.R")
+source("Server/server_analytics.R")
 
 server <- function(input, output, session) {
   
@@ -13,4 +17,5 @@ server <- function(input, output, session) {
   # Call sub-server functions
   home_server(input, output, session, selected_project_id)
   dashboard_server(input, output, session, selected_project_id)
+  analytics_server(input, output, session)
 }
