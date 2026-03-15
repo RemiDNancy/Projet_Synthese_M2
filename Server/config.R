@@ -53,44 +53,36 @@ fetch_projects_from_db <- function() {
   tryCatch({
     # Query to get projects with their latest evolution data and creator info
     query <- "
-      SELECT
-        p.project_id,
-        p.title,
-        p.category,
-        p.subcategory AS category_sub,
-        p.url,
-        p.image_url,
-        p.goal_amount,
-        p.currency AS goal_currency,
-        p.is_project_we_love,
-        p.created_at AS launched_at,
-        p.deadline_at,
-        p.location AS country,
-        c.creator_name,
-        pe.pledged_amount,
-        pe.backers_count,
-        pe.percent_funded,
-        pe.current_state,
-        pe.scrap_date
-      FROM PROJECT p
-      INNER JOIN CREATOR c ON p.id_creator = c.creator_id
-      INNER JOIN (
-        SELECT
-          project_id,
-          pledged_amount,
-          backers_count,
-          percent_funded,
-          current_state,
-          scrap_date
-        FROM PROJECT_EVOLUTION pe1
-        WHERE scrap_date = (
-          SELECT MAX(scrap_date)
-          FROM PROJECT_EVOLUTION pe2
-          WHERE pe2.project_id = pe1.project_id
-        )
-      ) pe ON p.project_id = pe.project_id
-      ORDER BY p.project_id
-    "
+    SELECT
+      p.id_projet        AS project_id,
+      p.titre_projet     AS title,
+      c.nom_categorie    AS category,
+      c.nom_categorie_mere AS category_sub,
+      p.url,
+      p.url_image        AS image_url,
+      p.objectif_financement AS goal_amount,
+      p.devise           AS goal_currency,
+      p.is_project_we_love,
+      p.date_creation    AS launched_at,
+      p.date_deadline    AS deadline_at,
+      l.pays             AS country,
+      cr.nom_createur    AS creator_name,
+      fps.montant_collecte   AS pledged_amount,
+      fps.nombre_contributeurs AS backers_count,
+      fps.ratio_financement  AS percent_funded,
+      fps.id_date_collecte   AS scrap_date
+    FROM Projet p
+    LEFT JOIN Fait_projet_snapshot fps ON p.id_projet = fps.id_projet
+    LEFT JOIN Createur cr ON fps.id_createur = cr.id_createur
+    LEFT JOIN Categorie c ON fps.categorie = c.nom_categorie
+    LEFT JOIN Localisation l ON fps.localisation = l.id_localisation
+    WHERE fps.id_date_collecte = (
+      SELECT MAX(fps2.id_date_collecte)
+      FROM Fait_projet_snapshot fps2
+      WHERE fps2.id_projet = p.id_projet
+    )
+    ORDER BY p.id_projet
+  "
 
     projects_raw <- safe_dbGetQuery(con, query)
 
@@ -108,9 +100,10 @@ fetch_projects_from_db <- function() {
     projects_raw$pledged_symbol <- sapply(projects_raw$goal_currency, map_symbol)
 
     # Normalize state to Title Case regardless of DB casing
-    projects_raw$status <- sapply(projects_raw$current_state, function(state) {
-      tools::toTitleCase(tolower(trimws(as.character(state))))
-    })
+    projects_raw$status <- ifelse(
+      projects_raw$percent_funded >= 1.0, "Successful",
+      ifelse(projects_raw$percent_funded > 0, "Live", "Failed")
+      )
 
     # Convert timestamps to numeric (epoch seconds)
     projects_raw$launched_at <- as.numeric(as.POSIXct(projects_raw$launched_at))
@@ -124,6 +117,22 @@ fetch_projects_from_db <- function() {
     projects_raw$pledged_amount <- as.numeric(projects_raw$pledged_amount)
     projects_raw$backers_count <- as.integer(projects_raw$backers_count)
     projects_raw$percent_funded <- as.numeric(projects_raw$percent_funded)
+    
+    # Enrichissement avec current_state depuis kickstarter
+    con_ks <- get_ks_connection()
+    states <- safe_dbGetQuery(con_ks, "
+    SELECT project_id, current_state
+    FROM PROJECT_EVOLUTION
+    WHERE (project_id, scrap_date) IN (
+      SELECT project_id, MAX(scrap_date)
+      FROM PROJECT_EVOLUTION
+    GROUP BY project_id )")
+    close_db_connection(con_ks)
+    
+    projects_raw <- merge(projects_raw, states, by = "project_id", all.x = TRUE)
+    projects_raw$status <- sapply(projects_raw$current_state, function(state) {
+      tools::toTitleCase(tolower(trimws(as.character(state))))
+    })
 
     return(projects_raw)
     
@@ -134,6 +143,7 @@ fetch_projects_from_db <- function() {
     close_db_connection(con)
   })
 }
+
 
 # ============================================================================
 # Fetch rewards for a specific project

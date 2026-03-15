@@ -9,6 +9,17 @@ get_db_connection <- function() {
     RMySQL::MySQL(),
     host = "127.0.0.1",
     port = 3306,
+    dbname = "base_traitee",
+    user = Sys.getenv("MYSQL_USER", "root"),
+    password = "snow1998"
+  )
+}
+# Connexion BDD source (kickstarter) - pour les informations manquant
+get_ks_connection <- function() {
+  DBI::dbConnect(
+    RMySQL::MySQL(),
+    host = "127.0.0.1",
+    port = 3306,
     dbname = "kickstarter",
     user = Sys.getenv("MYSQL_USER", "root"),
     password = "snow1998"
@@ -38,11 +49,11 @@ close_db_connection <- function(con) {
 test_db_connection <- function() {
   con <- get_db_connection()
   if (dbIsValid(con)) {
-    message("✓ Database connection successful!")
+    message("Database connection successful!")
     close_db_connection(con)
     return(TRUE)
   } else {
-    message("✗ Database connection failed!")
+    message("Database connection failed!")
     return(FALSE)
   }
 }

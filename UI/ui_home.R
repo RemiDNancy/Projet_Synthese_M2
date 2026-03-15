@@ -1,6 +1,6 @@
 # ============================================================================
 # Home tab UI definition
-# Contains both the project list view and the inline project detail view
+# -> The first page that appears with all the projects + filters
 # ============================================================================
 home_tab_ui <- function() {
   tabItem(
@@ -8,11 +8,11 @@ home_tab_ui <- function() {
     
     # === List view (filters + project grid) ===
     div(id = "projects_list_view",
-        style = "display: block;",  # Make sure it's visible by default
+        style = "display: block;",  
         
         h1("Projects", class = "page-title"),
         
-        # Filters
+        # The Filters
         fluidRow(
           column(12,
                  div(class = "filter-section",
@@ -52,7 +52,7 @@ home_tab_ui <- function() {
     
     # === Detail view (hidden by default, shown when a project is clicked) ===
     div(id = "project_detail_view",
-        style = "display: none;",  # Hidden by default
+        style = "display: none;",  
         dashboard_content_ui()
     )
   )
