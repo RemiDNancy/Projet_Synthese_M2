@@ -1,36 +1,43 @@
 # ============================================================================
-# Project detail content (displayed inline on the home page)
-# Modular version - all sub-UI functions defined here
+# ui_dashboard.R
+# Interface de la vue détail d'un projet (affiché inline sur la home page)
+# Structure : Header projet->  Tabs de navigation-> Contenu des tabs
 # ============================================================================
 
-# --- Back link + Project Header ---
+# ── Header projet ────────────────────────────────────────────────────────────
+# Affiche : breadcrumb retour, image, titre, catégorie, créateur,
+#           badge "Project We Love", lien Kickstarter, dates, statut
 dashboard_header_ui <- function() {
   tagList(
-    # Back link
+    
+    # Lien retour vers la liste des projets
     fluidRow(
       column(12,
              tags$p(
                style = "color: #95A5A6; font-size: 14px; margin-bottom: 20px;",
                tags$a(
                  icon("arrow-left"), " Back to Projects",
-                 href = "#",
+                 href    = "#",
                  onclick = "Shiny.setInputValue('goto_home', Math.random(), {priority: 'event'})",
-                 style = "color: #667EEA; text-decoration: none; font-weight: 600;"
+                 style   = "color: #667EEA; text-decoration: none; font-weight: 600;"
                ),
                " \u2192 ",
-               tags$strong(textOutput("current_project_name", inline = TRUE), style = "color: #2C3E50;")
+               tags$strong(textOutput("current_project_name", inline = TRUE),
+                           style = "color: #2C3E50;")
              )
       )
     ),
-
-    # Project Header
+    
+    # Carte header : image | infos projet | dates + statut
     fluidRow(
       column(12,
              div(class = "project-header",
                  fluidRow(
-                   column(2,
-                          uiOutput("project_image")
-                   ),
+                   
+                   # Colonne image
+                   column(2, uiOutput("project_image")),
+                   
+                   # Colonne infos principales
                    column(6,
                           div(style = "font-size: 28px; font-weight: bold; color: #2C3E50; margin-bottom: 10px;",
                               textOutput("project_title", inline = TRUE)),
@@ -38,16 +45,20 @@ dashboard_header_ui <- function() {
                               textOutput("project_category_breadcrumb", inline = TRUE)),
                           div(style = "margin-bottom: 15px;",
                               tags$span("Creator: ", style = "color: #95A5A6; font-size: 14px;"),
-                              tags$strong(textOutput("project_creator", inline = TRUE), style = "color: #667EEA; font-size: 14px;")
+                              tags$strong(textOutput("project_creator", inline = TRUE),
+                                          style = "color: #667EEA; font-size: 14px;")
                           ),
-                          uiOutput("project_we_love_badge"),
-                          uiOutput("project_kickstarter_link")
+                          uiOutput("project_we_love_badge"),   # badge conditionnel
+                          uiOutput("project_kickstarter_link") # lien externe
                    ),
+                   
+                   # Colonne dates + statut
                    column(4,
                           fluidRow(
                             column(6,
                                    div(style = "background: #EEF2FF; border-radius: 12px; padding: 15px; text-align: center;",
-                                       div(style = "color: #667EEA; margin-bottom: 8px;", icon("calendar", class = "fa-lg")),
+                                       div(style = "color: #667EEA; margin-bottom: 8px;",
+                                           icon("calendar", class = "fa-lg")),
                                        div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;", "Start Date"),
                                        div(style = "font-weight: bold; color: #2C3E50;",
                                            textOutput("project_start_date", inline = TRUE))
@@ -55,7 +66,8 @@ dashboard_header_ui <- function() {
                             ),
                             column(6,
                                    div(style = "background: #EEF2FF; border-radius: 12px; padding: 15px; text-align: center;",
-                                       div(style = "color: #9B59B6; margin-bottom: 8px;", icon("calendar", class = "fa-lg")),
+                                       div(style = "color: #9B59B6; margin-bottom: 8px;",
+                                           icon("calendar", class = "fa-lg")),
                                        div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;", "End Date"),
                                        div(style = "font-weight: bold; color: #2C3E50;",
                                            textOutput("project_end_date", inline = TRUE))
@@ -74,22 +86,33 @@ dashboard_header_ui <- function() {
   )
 }
 
-# --- Overview Tab ---
+# ── Onglet Overview ──────────────────────────────────────────────────────────
+# Contient :
+#   - Funding Overview : pie chart % collecté + montants + contributeurs
+#   - Quick Stats      : daily avg, jours restants, velocity, backers growth
+#   - Funding Progress : graphique temporel (projet vs catégorie vs goal)
 overview_tab_ui <- function() {
   div(id = "content_overview", class = "dash-tab-content active",
+      
+      # ── Ligne 1 : Funding Overview + Quick Stats ──────────────────────
       fluidRow(
+        
+        # Funding Overview
         column(6,
                div(class = "stat-box",
                    div(class = "stat-title",
                        icon("chart-bar", style = "color: #667EEA; margin-right: 10px;"),
                        "Funding Overview"),
                    fluidRow(
+                     # Pie chart : % collecté vs restant
                      column(6, plotlyOutput("overview_pie", height = "220px")),
+                     # Chiffres clés : montant collecté, objectif, contributeurs
                      column(6,
                             div(class = "mini-stat",
                                 div(style = "display: flex; align-items: center; margin-bottom: 5px;",
                                     icon("dollar-sign", style = "color: #667EEA; margin-right: 8px;"),
-                                    tags$span("Collected", style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
+                                    tags$span("Collected",
+                                              style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
                                 ),
                                 div(style = "font-size: 28px; font-weight: bold; color: #667EEA;",
                                     textOutput("project_collected", inline = TRUE))
@@ -97,7 +120,8 @@ overview_tab_ui <- function() {
                             div(class = "mini-stat",
                                 div(style = "display: flex; align-items: center; margin-bottom: 5px;",
                                     icon("bullseye", style = "color: #2C3E50; margin-right: 8px;"),
-                                    tags$span("Goal", style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
+                                    tags$span("Goal",
+                                              style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
                                 ),
                                 div(style = "font-size: 22px; font-weight: bold; color: #2C3E50;",
                                     textOutput("project_goal", inline = TRUE))
@@ -105,7 +129,8 @@ overview_tab_ui <- function() {
                             div(class = "mini-stat",
                                 div(style = "display: flex; align-items: center; margin-bottom: 5px;",
                                     icon("users", style = "color: #9B59B6; margin-right: 8px;"),
-                                    tags$span("Contributors", style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
+                                    tags$span("Contributors",
+                                              style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
                                 ),
                                 div(style = "font-size: 22px; font-weight: bold; color: #2C3E50;",
                                     textOutput("project_backers", inline = TRUE))
@@ -114,39 +139,63 @@ overview_tab_ui <- function() {
                    )
                )
         ),
+        
+        # Quick Stats (4 indicateurs dynamiques depuis base_traitee)
         column(6,
                div(class = "stat-box",
                    div(class = "stat-title", "Quick Stats"),
                    div(class = "quick-stats-grid",
+                       
+                       # Moyenne quotidienne collectée (converti en EUR)
                        div(class = "quick-stat green",
-                           div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;", "Daily Average"),
-                           div(style = "font-size: 24px; font-weight: bold; color: #059669;", "+$1,200")
+                           div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;",
+                               "Daily Average"),
+                           div(style = "font-size: 24px; font-weight: bold; color: #059669;",
+                               textOutput("stat_daily_avg", inline = TRUE))
                        ),
+                       
+                       # Jours restants avant la deadline (calculé depuis date_deadline)
                        div(class = "quick-stat blue",
-                           div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;", "Days Remaining"),
-                           div(style = "font-size: 24px; font-weight: bold; color: #2563EB;", "18")
+                           div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;",
+                               "Days Remaining"),
+                           div(style = "font-size: 24px; font-weight: bold; color: #2563EB;",
+                               textOutput("stat_days_remaining", inline = TRUE))
                        ),
+                       
+                       # Funding velocity : Above / Average / Below (vs moyenne de la catégorie)
                        div(class = "quick-stat orange",
-                           div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;", "Funding Velocity"),
-                           div(style = "font-size: 24px; font-weight: bold; color: #F39C12;", "Above Avg")
+                           div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;",
+                               "Funding Velocity"),
+                           div(style = "font-size: 24px; font-weight: bold; color: #F39C12;",
+                               textOutput("stat_funding_velocity", inline = TRUE))
                        ),
+                       
+                       # Backers growth : moyenne quotidienne de nouveaux contributeurs
                        div(class = "quick-stat purple",
-                           div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;", "Backers Growth"),
-                           div(style = "font-size: 24px; font-weight: bold; color: #9B59B6;", "+42 today")
+                           div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;",
+                               "Backers Growth"),
+                           div(style = "font-size: 24px; font-weight: bold; color: #9B59B6;",
+                               textOutput("stat_backers_growth", inline = TRUE))
                        )
                    )
                )
         )
       ),
+      
+      # ── Ligne 2 : Funding Progress (graphique temporel) ──────────────
+      # 3 courbes : progression du projet | moyenne catégorie | goal 100%
+      # Comparaison : sous-catégorie si >= 3 projets, sinon catégorie parente
       fluidRow(
         column(12,
                div(class = "chart-container",
                    div(style = "display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;",
                        div(
-                           icon("chart-line", style = "color: #667EEA; font-size: 24px; margin-right: 10px; vertical-align: middle;"),
-                           tags$span("Funding Progress",
-                                     style = "font-size: 28px; font-weight: bold; color: #2C3E50; display: inline; vertical-align: middle;")
+                         icon("chart-line",
+                              style = "color: #667EEA; font-size: 24px; margin-right: 10px; vertical-align: middle;"),
+                         tags$span("Funding Progress",
+                                   style = "font-size: 28px; font-weight: bold; color: #2C3E50; display: inline; vertical-align: middle;")
                        ),
+                       # Boutons zoom (JS)
                        div(class = "zoom-btn-row", style = "margin-bottom: 0;",
                            tags$button(class = "zoom-btn", title = "Zoom In",
                                        onclick = "plotZoomIn('main_chart')",
@@ -163,48 +212,50 @@ overview_tab_ui <- function() {
   )
 }
 
-# --- Main dashboard content assembly ---
+# ── Assemblage principal du dashboard ────────────────────────────────────────
+# Combine : header + tabs de navigation + contenu de chaque tab
 dashboard_content_ui <- function() {
   tagList(
-    # Project Header (imported)
+    
+    # Header projet (breadcrumb, image, titre, dates, statut)
     dashboard_header_ui(),
-
-    # Navigation Tabs
+    
+    # Barre de navigation entre les tabs
     fluidRow(
       column(12,
              div(class = "tab-navigation",
                  actionButton("tab_overview",
                               tagList(icon("chart-bar"), " Overview"),
-                              class = "nav-tab active",
+                              class   = "nav-tab active",
                               onclick = "Shiny.setInputValue('active_tab', 'overview', {priority: 'event'})"),
                  actionButton("tab_sentiment",
                               tagList(icon("comments"), " Sentiment"),
-                              class = "nav-tab",
+                              class   = "nav-tab",
                               onclick = "Shiny.setInputValue('active_tab', 'sentiment', {priority: 'event'})"),
                  actionButton("tab_rewards",
                               tagList(icon("award"), " Rewards"),
-                              class = "nav-tab",
+                              class   = "nav-tab",
                               onclick = "Shiny.setInputValue('active_tab', 'rewards', {priority: 'event'})"),
                  actionButton("tab_creator",
                               tagList(icon("user"), " Creator"),
-                              class = "nav-tab",
+                              class   = "nav-tab",
                               onclick = "Shiny.setInputValue('active_tab', 'creator', {priority: 'event'})"),
                  actionButton("tab_ai",
                               tagList(icon("bolt"), " AI Insights"),
-                              class = "nav-tab",
+                              class   = "nav-tab",
                               onclick = "Shiny.setInputValue('active_tab', 'ai', {priority: 'event'})")
              )
       )
     ),
-
-    # Tab Content
+    
+    # Contenu des tabs (un seul visible à la fois via CSS active/inactive)
     fluidRow(
       column(12,
-             overview_tab_ui(),
-             sentiment_tab_ui(),
-             rewards_tab_ui(),
-             creator_tab_ui(),
-             ai_tab_ui()
+             overview_tab_ui(),   # onglet Overview (actif par défaut)
+             sentiment_tab_ui(),  # onglet Sentiment (BERT scores)
+             rewards_tab_ui(),    # onglet Rewards
+             creator_tab_ui(),    # onglet Creator
+             ai_tab_ui()          # onglet AI Insights
       )
     )
   )

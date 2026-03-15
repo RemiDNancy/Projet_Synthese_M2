@@ -39,6 +39,29 @@ currency_to_symbol <- c(
   "SGD" = "S$", "HKD" = "HK$"
 )
 
+eur_rates <- c(
+  "EUR" = 1.0000,
+  "USD" = 0.9200,
+  "GBP" = 1.1700,
+  "CAD" = 0.6800,
+  "AUD" = 0.5900,
+  "JPY" = 0.0062,
+  "CHF" = 1.0400,
+  "SEK" = 0.0880,
+  "NOK" = 0.0850,
+  "DKK" = 0.1340,
+  "NZD" = 0.5400,
+  "MXN" = 0.0460,
+  "SGD" = 0.6800,
+  "HKD" = 0.1180
+)
+
+convert_to_eur <- function(amount, currency) {
+  rate <- eur_rates[toupper(trimws(currency))]
+  if (is.na(rate)) return(amount)  # fallback si devise inconnue
+  return(round(amount * rate, 0))
+}
+
 map_symbol <- function(code) {
   sym <- currency_to_symbol[toupper(trimws(code))]
   ifelse(is.na(sym), paste0(code, " "), sym)
@@ -262,13 +285,7 @@ country_choices <- c("All countries", sort(unique(sample_projects$country)))
 # ============================================================================
 # Sample time-series data (no corresponding data in database yet)
 # ============================================================================
-funding_data <- data.frame(
-  date = c("02/02", "02/09", "02/16", "02/23", "03/02", "03/09"),
-  progress = c(8000, 12000, 18000, 26000, 32000, 34000),
-  average = c(10000, 13000, 16000, 19000, 22000, 24000),
-  goal = rep(40000, 6),
-  stringsAsFactors = FALSE
-)
+
 
 sentiment_data <- data.frame(
   date = c("02/02", "02/09", "02/16", "02/23", "03/02", "03/09"),
