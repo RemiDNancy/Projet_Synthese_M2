@@ -10,6 +10,31 @@ creator_server <- function(input, output, session, current_project) {
     sample_projects[sample_projects$creator_name == p$creator_name, ]
   })
 
+  # ── Données créateur depuis kickstarter.CREATOR ───────────────────────────
+  creator_ks_data <- reactive({
+    p <- current_project()
+    if (is.null(p)) return(NULL)
+
+    con <- get_ks_connection()
+    tryCatch({
+      query <- sprintf("
+        SELECT c.biography, c.is_fb_connected, c.nb_websites
+        FROM CREATOR c
+        INNER JOIN PROJECT pr ON c.creator_id = pr.id_creator
+        WHERE pr.project_id = %d
+        LIMIT 1
+      ", p$project_id)
+      result <- suppressWarnings(dbGetQuery(con, query))
+      if (nrow(result) == 0) return(NULL)
+      result
+    }, error = function(e) {
+      message("Error fetching creator KS data: ", e$message)
+      return(NULL)
+    }, finally = {
+      close_db_connection(con)
+    })
+  })
+
   # Creator initials (e.g. "John Doe" -> "JD")
   output$creator_initials <- renderText({
     p <- current_project()
@@ -58,36 +83,56 @@ creator_server <- function(input, output, session, current_project) {
     as.character(nrow(creator_projects()))
   })
 
-  # Success rate across all projects
-  output$creator_success_rate <- renderText({
-    cp <- creator_projects()
-    if (nrow(cp) == 0) return("N/A")
-    n_success <- sum(cp$status == "Successful", na.rm = TRUE)
-    paste0(round(n_success / nrow(cp) * 100), "%")
+  # Nombre de réponses du créateur sur le projet actif
+  output$creator_reply_count <- renderText({
+    p <- current_project()
+    if (is.null(p)) return("0")
+    con <- get_ks_connection()
+    tryCatch({
+      query <- sprintf("
+        SELECT COUNT(*) AS n
+        FROM PROJECT_COMMENT
+        WHERE project_id = %d AND is_creator_reply = 1
+      ", p$project_id)
+      result <- suppressWarnings(dbGetQuery(con, query))
+      as.character(result$n[1])
+    }, error = function(e) {
+      message("Error fetching creator replies: ", e$message)
+      "0"
+    }, finally = {
+      close_db_connection(con)
+    })
   })
 
-  # Total amount raised across all projects
-  output$creator_total_raised <- renderText({
-    cp <- creator_projects()
-    if (nrow(cp) == 0) return("$0")
-    total <- sum(cp$pledged_amount, na.rm = TRUE)
-    p <- current_project()
-    sym <- if (!is.null(p) && !is.na(p$pledged_symbol)) p$pledged_symbol else "$"
-    if (total >= 1e6) {
-      paste0(sym, round(total / 1e6, 1), "M")
-    } else if (total >= 1e3) {
-      paste0(sym, round(total / 1e3, 1), "K")
+  # Nombre de sites web du créateur
+  output$creator_nb_websites <- renderText({
+    ks <- creator_ks_data()
+    if (is.null(ks)) return("—")
+    n <- ks$nb_websites[1]
+    if (is.na(n)) return("—")
+    as.character(as.integer(n))
+  })
+
+  # Badge Facebook : connecté ou non
+  output$creator_fb_badge <- renderUI({
+    ks <- creator_ks_data()
+    connected <- !is.null(ks) && isTRUE(as.logical(ks$is_fb_connected[1]))
+    if (connected) {
+      div(style = "padding: 4px 10px; background: #E8F0FE; color: #1877F2; border-radius: 12px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;",
+          icon("facebook", style = "font-size: 12px;"), "Facebook Connected")
     } else {
-      paste0(sym, formatC(round(total), format = "d", big.mark = ","))
+      div(style = "padding: 4px 10px; background: #F3F4F6; color: #9CA3AF; border-radius: 12px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;",
+          icon("facebook", style = "font-size: 12px;"), "Not on Facebook")
     }
   })
 
-  # Average backers per project
-  output$creator_avg_backers <- renderText({
-    cp <- creator_projects()
-    if (nrow(cp) == 0) return("0")
-    avg <- mean(cp$backers_count, na.rm = TRUE)
-    formatC(round(avg), format = "d", big.mark = ",")
+  # Biographie du créateur
+  output$creator_bio <- renderUI({
+    ks <- creator_ks_data()
+    bio <- if (!is.null(ks)) trimws(as.character(ks$biography[1])) else ""
+    if (is.na(bio) || nchar(bio) == 0) return(NULL)
+    div(style = "font-size: 15px; color: #6B7280; margin-top: 8px; line-height: 1.6; font-style: italic;",
+        bio)
   })
 
   # Radar chart: creator strengths (sample scores)
@@ -211,14 +256,15 @@ creator_server <- function(input, output, session, current_project) {
   })
 
   # Force rendering even when the Creator tab is hidden
-  outputOptions(output, "creator_initials",            suspendWhenHidden = FALSE)
+  outputOptions(output, "creator_fb_badge",             suspendWhenHidden = FALSE)
+  outputOptions(output, "creator_bio",                  suspendWhenHidden = FALSE)
+  outputOptions(output, "creator_initials",             suspendWhenHidden = FALSE)
   outputOptions(output, "creator_name_header",         suspendWhenHidden = FALSE)
   outputOptions(output, "creator_title",               suspendWhenHidden = FALSE)
   outputOptions(output, "creator_location",            suspendWhenHidden = FALSE)
   outputOptions(output, "creator_total_projects",      suspendWhenHidden = FALSE)
-  outputOptions(output, "creator_success_rate",        suspendWhenHidden = FALSE)
-  outputOptions(output, "creator_total_raised",        suspendWhenHidden = FALSE)
-  outputOptions(output, "creator_avg_backers",         suspendWhenHidden = FALSE)
+  outputOptions(output, "creator_reply_count",          suspendWhenHidden = FALSE)
+  outputOptions(output, "creator_nb_websites",         suspendWhenHidden = FALSE)
   outputOptions(output, "creator_strengths_radar",     suspendWhenHidden = FALSE)
   outputOptions(output, "creator_communication_chart", suspendWhenHidden = FALSE)
   outputOptions(output, "creator_past_projects",       suspendWhenHidden = FALSE)

@@ -26,51 +26,40 @@ creator_tab_ui <- function() {
                                 div(style = "display: flex; align-items: center; gap: 10px; margin-bottom: 8px;",
                                     div(style = "font-size: 24px; font-weight: bold; color: #2C3E50;",
                                         textOutput("creator_name_header", inline = TRUE)),
-                                    div(class = "badge-present", 
-                                        style = "padding: 4px 10px; background: #E8F5E9; color: #05CE78; border-radius: 12px; font-size: 11px; font-weight: 600;",
-                                        "✓ Present"),
-                                    div(class = "badge-rewards",
-                                        style = "padding: 4px 10px; background: #FFF3E0; color: #F39C12; border-radius: 12px; font-size: 11px; font-weight: 600;",
-                                        "🏆 10 Rewards")
+                                    uiOutput("creator_fb_badge", inline = TRUE)
                                 ),
                                 div(style = "font-size: 14px; color: #95A5A6; margin-bottom: 5px;",
                                     textOutput("creator_title", inline = TRUE)),
                                 div(style = "font-size: 13px; color: #6B7280;",
                                     icon("map-marker-alt", style = "color: #667EEA; margin-right: 5px;"),
                                     textOutput("creator_location", inline = TRUE)
-                                )
+                                ),
+                                uiOutput("creator_bio", style = "font-size: 15px;")
                             )
                      ),
                      # Right: Stats
                      column(4,
                             div(class = "creator-quick-stats",
                                 fluidRow(
-                                  column(3,
+                                  column(4,
                                          div(class = "creator-stat-mini",
-                                             div(style = "font-size: 24px; font-weight: bold; color: #2C3E50;",
+                                             div(style = "font-size: 32px; font-weight: bold; color: #2C3E50;",
                                                  textOutput("creator_total_projects", inline = TRUE)),
-                                             div(style = "font-size: 11px; color: #95A5A6;", "Projects")
+                                             div(style = "font-size: 13px; color: #95A5A6;", "Launched Projects")
                                          )
                                   ),
-                                  column(3,
+                                  column(4,
                                          div(class = "creator-stat-mini",
-                                             div(style = "font-size: 24px; font-weight: bold; color: #05CE78;",
-                                                 textOutput("creator_success_rate", inline = TRUE)),
-                                             div(style = "font-size: 11px; color: #95A5A6;", "Success")
+                                             div(style = "font-size: 32px; font-weight: bold; color: #05CE78;",
+                                                 textOutput("creator_reply_count", inline = TRUE)),
+                                             div(style = "font-size: 13px; color: #95A5A6;", "Replies")
                                          )
                                   ),
-                                  column(3,
+                                  column(4,
                                          div(class = "creator-stat-mini",
-                                             div(style = "font-size: 24px; font-weight: bold; color: #667EEA;",
-                                                 textOutput("creator_total_raised", inline = TRUE)),
-                                             div(style = "font-size: 11px; color: #95A5A6;", "Total Raised")
-                                         )
-                                  ),
-                                  column(3,
-                                         div(class = "creator-stat-mini",
-                                             div(style = "font-size: 24px; font-weight: bold; color: #F39C12;",
-                                                 textOutput("creator_avg_backers", inline = TRUE)),
-                                             div(style = "font-size: 11px; color: #95A5A6;", "Avg Backers")
+                                             div(style = "font-size: 32px; font-weight: bold; color: #F39C12;",
+                                                 textOutput("creator_nb_websites", inline = TRUE)),
+                                             div(style = "font-size: 13px; color: #95A5A6;", "Websites")
                                          )
                                   )
                                 )
