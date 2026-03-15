@@ -57,6 +57,22 @@ sentiment_server <- function(input, output, session, current_project) {
     )
   })
   
+  # ── Nombre total de commentaires ─────────────────────────────────────────
+  output$sentiment_comment_count <- renderUI({
+    pcts <- sentiment_pcts()
+    if (pcts$total == 0) {
+      div(style = "font-size: 13px; color: #BDC3C7; margin-bottom: 12px;",
+          icon("comment-slash", style = "margin-right: 6px;"),
+          "No comments available for this project")
+    } else {
+      div(style = "font-size: 13px; color: #95A5A6; margin-bottom: 12px;",
+          icon("comment", style = "margin-right: 6px; color: #059669;"),
+          tags$strong(formatC(pcts$total, format = "d", big.mark = ","),
+                      style = "color: #2C3E50;"),
+          " comments analyzed")
+    }
+  })
+
   # ── Donut chart : Overall Sentiment ──────────────────────────────────────
   # Arc POS (vert) / NEU (bleu) / NEG (rouge)
   # Le texte centré (% positif) est géré côté UI avec uiOutput
@@ -194,8 +210,9 @@ sentiment_server <- function(input, output, session, current_project) {
         )
       }))
       
-      plot_ly(weekly) %>%
+      plot_ly() %>%
         add_trace(
+          data = weekly,
           x = ~date, y = ~pos, name = "Positive",
           type = 'scatter', mode = 'lines+markers',
           fill = 'tozeroy',
@@ -205,6 +222,7 @@ sentiment_server <- function(input, output, session, current_project) {
           fillcolor = 'rgba(134, 239, 172, 0.2)'
         ) %>%
         add_trace(
+          data = weekly,
           x = ~date, y = ~neu, name = "Neutral",
           type = 'scatter', mode = 'lines+markers',
           fill = 'tonexty',
@@ -214,6 +232,7 @@ sentiment_server <- function(input, output, session, current_project) {
           fillcolor = 'rgba(147, 197, 253, 0.2)'
         ) %>%
         add_trace(
+          data = weekly,
           x = ~date, y = ~neg, name = "Negative",
           type = 'scatter', mode = 'lines+markers',
           fill = 'tonexty',
@@ -255,6 +274,7 @@ sentiment_server <- function(input, output, session, current_project) {
   })
   
   # Force le rendu même quand l'onglet est caché (tab CSS custom)
+  outputOptions(output, "sentiment_comment_count",   suspendWhenHidden = FALSE)
   outputOptions(output, "sentiment_donut_main",      suspendWhenHidden = FALSE)
   outputOptions(output, "sentiment_donut_center",    suspendWhenHidden = FALSE)
   outputOptions(output, "sentiment_pct_positive",    suspendWhenHidden = FALSE)

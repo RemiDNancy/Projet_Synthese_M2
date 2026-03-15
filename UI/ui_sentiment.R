@@ -15,7 +15,9 @@ sentiment_tab_ui <- function() {
                    div(class = "stat-title",
                        icon("comments", style = "color: #059669; margin-right: 10px;"),
                        "Overall Sentiment"),
-                   
+
+                   uiOutput("sentiment_comment_count"),
+
                    # Donut chart avec texte centré dynamique
                    div(style = "position: relative; height: 280px; margin-bottom: 20px;",
                        plotlyOutput("sentiment_donut_main", height = "280px"),

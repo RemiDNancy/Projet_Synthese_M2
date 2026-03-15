@@ -128,9 +128,10 @@ analytics_server <- function(input, output, session) {
       stringsAsFactors = FALSE
     )
     
-    plot_ly(time_data) %>%
+    plot_ly() %>%
       # Total Launched line
       add_trace(
+        data = time_data,
         x = ~month,
         y = ~total_launched,
         name = 'Total Launched',
@@ -141,6 +142,7 @@ analytics_server <- function(input, output, session) {
       ) %>%
       # Successful line
       add_trace(
+        data = time_data,
         x = ~month,
         y = ~successful,
         name = 'Successful',
@@ -151,6 +153,7 @@ analytics_server <- function(input, output, session) {
       ) %>%
       # Failed line (dashed)
       add_trace(
+        data = time_data,
         x = ~month,
         y = ~failed,
         name = 'Failed',

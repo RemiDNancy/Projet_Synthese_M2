@@ -96,10 +96,11 @@ creator_server <- function(input, output, session, current_project) {
     r_values     <- c(92, 78, 85, 88, 75, 92)
 
     plot_ly(
-      type  = 'scatterpolar',
-      r     = r_values,
-      theta = theta_labels,
-      fill  = 'toself',
+      type   = 'scatterpolar',
+      mode   = 'lines+markers',
+      r      = r_values,
+      theta  = theta_labels,
+      fill   = 'toself',
       fillcolor = 'rgba(102, 126, 234, 0.2)',
       line  = list(color = '#667EEA', width = 2),
       marker = list(color = '#667EEA', size = 6)

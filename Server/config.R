@@ -136,20 +136,21 @@ fetch_projects_from_db <- function() {
     projects_raw$percent_funded <- as.numeric(projects_raw$percent_funded)
     
     # Dérivation du statut depuis base_traitee uniquement
-    # Logique : ratio_financement >= 1 → Successful
-    #           deadline future      → Live
-    #           sinon                → Failed
-    projects_raw$status <- mapply(function(ratio, deadline_ts) {
-      if (is.na(ratio)) return("Failed")
+    # Logique : deadline non passée           → Live
+    #           deadline passée + collecte >= objectif → Successful
+    #           sinon                         → Failed
+    projects_raw$status <- mapply(function(pledged, goal, deadline_ts) {
+      if (is.na(pledged) || is.na(goal) || goal <= 0) return("Failed")
       deadline_date <- as.Date(as.POSIXct(deadline_ts, origin = "1970-01-01"))
-      if (ratio >= 1.0) {
-        "Successful"
-      } else if (!is.na(deadline_date) && deadline_date >= Sys.Date()) {
+      deadline_passed <- is.na(deadline_date) || deadline_date < Sys.Date()
+      if (!deadline_passed) {
         "Live"
+      } else if (pledged >= goal) {
+        "Successful"
       } else {
         "Failed"
       }
-    }, projects_raw$percent_funded, projects_raw$deadline_at)
+    }, projects_raw$pledged_amount, projects_raw$goal_amount, projects_raw$deadline_at)
     
     return(projects_raw)
     
@@ -273,6 +274,44 @@ for (pid in unique_project_ids) {
   pid_key <- as.character(pid)
   project_rewards[[pid_key]] <- fetch_rewards_from_db(pid)
 }
+
+# ============================================================================
+# Global reward benchmarks (price distribution, tier counts, sweet spot)
+# Computed once at startup from already-loaded data — no extra DB query
+# ============================================================================
+message("Computing global reward benchmarks...")
+global_reward_benchmarks <- local({
+
+  # Flatten all rewards with EUR prices + category
+  reward_rows <- lapply(names(project_rewards), function(pid) {
+    rw <- project_rewards[[pid]]
+    if (is.null(rw) || nrow(rw) == 0) return(NULL)
+    proj_row <- sample_projects[sample_projects$project_id == suppressWarnings(as.numeric(pid)), ]
+    if (nrow(proj_row) == 0) return(NULL)
+    data.frame(
+      category  = proj_row$category[1],
+      price_eur = mapply(convert_to_eur, rw$price, rw$currency_code),
+      backers   = as.numeric(rw$backers),
+      stringsAsFactors = FALSE
+    )
+  })
+  all_rewards <- do.call(rbind, Filter(Negate(is.null), reward_rows))
+
+  # Tier counts per project with category
+  tier_rows <- lapply(names(project_rewards), function(pid) {
+    rw <- project_rewards[[pid]]
+    if (is.null(rw)) return(NULL)
+    proj_row <- sample_projects[sample_projects$project_id == suppressWarnings(as.numeric(pid)), ]
+    if (nrow(proj_row) == 0) return(NULL)
+    data.frame(category = proj_row$category[1], n_tiers = nrow(rw), stringsAsFactors = FALSE)
+  })
+  tier_counts <- do.call(rbind, Filter(Negate(is.null), tier_rows))
+
+  list(all_rewards = all_rewards, tier_counts = tier_counts)
+})
+message(sprintf("  - Benchmarks: %d reward entries across %d projects",
+                nrow(global_reward_benchmarks$all_rewards),
+                nrow(global_reward_benchmarks$tier_counts)))
 
 # Filter choices derived from real data
 category_choices <- c("All categories", sort(unique(sample_projects$category)))
