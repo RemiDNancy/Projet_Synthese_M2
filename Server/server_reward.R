@@ -52,24 +52,12 @@ rewards_server <- function(input, output, session, current_project) {
   })
 
   # --- Top Stats (computed from real data) ---
-  output$total_backers <- renderText({
-    rw <- rewards_data()
-    if (is.null(rw)) return("0")
-    formatC(sum(rw$backers), format = "d", big.mark = ",")
-  })
-
-  output$backers_change <- renderText({
-    rw <- rewards_data()
-    if (is.null(rw)) return("")
-    paste(nrow(rw), "reward tiers")
-  })
-
   output$total_revenue <- renderText({
     rw <- rewards_data()
     p <- current_project()
-    if (is.null(rw) || is.null(p)) return("$0")
-    sym <- if (nrow(rw) > 0) rw$symbol[1] else "$"
-    paste0(sym, formatC(sum(rw$revenue), format = "d", big.mark = ","))
+    if (is.null(rw) || is.null(p)) return("€0")
+    total_eur <- convert_to_eur(sum(rw$revenue, na.rm = TRUE), rw$currency_code[1])
+    paste0("€", formatC(total_eur, format = "d", big.mark = ","))
   })
 
   output$revenue_change <- renderText({
@@ -88,28 +76,22 @@ rewards_server <- function(input, output, session, current_project) {
   output$avg_per_backer <- renderText({
     rw <- rewards_data()
     p <- current_project()
-    if (is.null(rw) || is.null(p)) return("$0")
-    total_b <- sum(rw$backers)
-    total_r <- sum(rw$revenue)
-    sym <- if (nrow(rw) > 0) rw$symbol[1] else "$"
+    if (is.null(rw) || is.null(p)) return("€0")
+    total_b <- sum(rw$backers, na.rm = TRUE)
+    total_r <- sum(rw$revenue, na.rm = TRUE)
     if (total_b > 0) {
-      paste0(sym, formatC(round(total_r / total_b, 2), format = "f", digits = 2, big.mark = ","))
+      avg_eur <- convert_to_eur(round(total_r / total_b, 2), rw$currency_code[1])
+      paste0("€", formatC(avg_eur, format = "f", digits = 2, big.mark = ","))
     } else {
-      paste0(sym, "0")
+      "€0"
     }
   })
 
   output$conversion_rate <- renderText({
     rw <- rewards_data()
-    p <- current_project()
-    if (is.null(rw) || is.null(p)) return("0%")
-    total_b <- sum(rw$backers)
-    project_backers <- p$backers_count
-    if (project_backers > 0) {
-      paste0(min(round(total_b / project_backers * 100), 100), "%")
-    } else {
-      "N/A"
-    }
+    if (is.null(rw)) return("€0")
+    avg_eur <- convert_to_eur(mean(rw$price, na.rm = TRUE), rw$currency_code[1])
+    paste0("€", formatC(avg_eur, format = "f", digits = 2, big.mark = ","))
   })
 
   output$conversion_change <- renderText({
@@ -200,5 +182,10 @@ rewards_server <- function(input, output, session, current_project) {
   })
 
   # Force rendering even when tab is hidden
-  outputOptions(output, "rewards_table", suspendWhenHidden = FALSE)
+  outputOptions(output, "total_revenue",   suspendWhenHidden = FALSE)
+  outputOptions(output, "revenue_change",  suspendWhenHidden = FALSE)
+  outputOptions(output, "avg_per_backer",  suspendWhenHidden = FALSE)
+  outputOptions(output, "conversion_rate", suspendWhenHidden = FALSE)
+  outputOptions(output, "conversion_change", suspendWhenHidden = FALSE)
+  outputOptions(output, "rewards_table",   suspendWhenHidden = FALSE)
 }

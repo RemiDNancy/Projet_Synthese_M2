@@ -6,19 +6,7 @@ rewards_tab_ui <- function() {
       
       # Top Stats Cards
       fluidRow(
-        column(3,
-               div(class = "stat-box",
-                   div(style = "display: flex; align-items: center; gap: 8px; margin-bottom: 8px;",
-                       icon("users", style = "color: #667EEA;"),
-                       tags$span("Total Backers", style = "font-size: 12px; color: #95A5A6; font-weight: 600;")
-                   ),
-                   div(style = "font-size: 32px; font-weight: bold; color: #2C3E50;",
-                       textOutput("total_backers", inline = TRUE)),
-                   div(style = "font-size: 11px; color: #05CE78; margin-top: 5px;",
-                       textOutput("backers_change", inline = TRUE))
-               )
-        ),
-        column(3,
+        column(4,
                div(class = "stat-box",
                    div(style = "display: flex; align-items: center; gap: 8px; margin-bottom: 8px;",
                        icon("dollar-sign", style = "color: #05CE78;"),
@@ -30,7 +18,7 @@ rewards_tab_ui <- function() {
                        textOutput("revenue_change", inline = TRUE))
                )
         ),
-        column(3,
+        column(4,
                div(class = "stat-box",
                    div(style = "display: flex; align-items: center; gap: 8px; margin-bottom: 8px;",
                        icon("percent", style = "color: #F39C12;"),
@@ -42,11 +30,11 @@ rewards_tab_ui <- function() {
                        "Industry: $19.00")
                )
         ),
-        column(3,
+        column(4,
                div(class = "stat-box",
                    div(style = "display: flex; align-items: center; gap: 8px; margin-bottom: 8px;",
                        icon("trending-up", style = "color: #9B59B6;"),
-                       tags$span("Conversion", style = "font-size: 12px; color: #95A5A6; font-weight: 600;")
+                       tags$span("Avg Reward Price", style = "font-size: 12px; color: #95A5A6; font-weight: 600;")
                    ),
                    div(style = "font-size: 32px; font-weight: bold; color: #2C3E50;",
                        textOutput("conversion_rate", inline = TRUE)),
