@@ -53,37 +53,41 @@ home_server <- function(input, output, session, selected_project_id) {
     project_cards <- lapply(1:nrow(projects), function(i) {
       project <- projects[i, ]
 
-      # Couleur de la barre de progression selon le taux de financement
-      if (project$percent_funded >= 100) {
-        bar_color <- colors$success          # vert : objectif atteint
-      } else if (project$percent_funded >= 50) {
-        bar_color <- colors$live             # bleu : en bonne voie
+      # Couleur de la barre selon le statut du projet
+      if (project$status == "Successful") {
+        bar_color <- "#166534"   # forest green
+      } else if (project$status == "Live") {
+        bar_color <- "#2563EB"   # blue
       } else {
-        bar_color <- colors$danger           # rouge : failed ou cancelled
+        bar_color <- "#991B1B"   # dark red
       }
       
-      # Couleur du badge de statut (définie dans functions.R)
-      status_color <- get_status_color(project$status)
+      # Status color matches bar color
+      status_color <- bar_color
 
       column(width = 6,
              div(class = "project-card",
-                 
+
                  # Clic sur la card -> ouverture de la vue détail du projet
                  onclick = sprintf("Shiny.setInputValue('selected_project', %d, {priority: 'event'})",
                                    project$project_id),
-                 tags$img(src = project$image_url,
-                          style = "width: 120px; height: 120px; border-radius: 8px; object-fit: cover; margin-bottom: 10px;"),
-                 div(class = "project-title", project$title),
-                 div(class = "project-category", project$category),
-                 div(class = "project-status", style = sprintf("color: %s;", status_color), project$status),
-                 
-                 # Barre de progression (plafonnée à 100% visuellement)
-                 div(class = "progress-bar-container",
+
+                 # Top section: image + title/category/status side by side
+                 div(style = "display: flex; align-items: flex-start; gap: 16px; margin-bottom: 12px;",
+                     tags$img(src = project$image_url,
+                              style = "width: 360px; height: auto; max-height: 360px; border-radius: 8px; object-fit: contain; background: transparent; flex-shrink: 0;"),
+                     div(style = "display: flex; flex-direction: column; justify-content: flex-start;",
+                         div(class = "project-title", project$title),
+                         div(class = "project-category", project$category),
+                         div(class = "project-status", style = sprintf("color: %s;", status_color), project$status)
+                     )
+                 ),
+                 # Progress bar spanning full card width
+                 div(class = "progress-bar-container", style = "width: 92%; margin: 0 auto 6px auto;",
                      div(class = "progress-bar-fill",
                          style = sprintf("width: %s%%; background: %s;",
                                          min(project$percent_funded, 100), bar_color))
                  ),
-                 # Pourcentage affiché pour un projet
                  div(class = "progress-percent", sprintf("%.1f%%", project$percent_funded))
              )
       )

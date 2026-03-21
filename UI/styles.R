@@ -4,6 +4,75 @@
 app_styles <- function() {
   css <- paste0("
         /* ============= STYLES GLOBAUX ============= */
+        body, .content-wrapper {
+          font-size: 15px;
+        }
+
+        /* ============= SIDEBAR MENU ============= */
+        .sidebar-menu > li > a {
+          font-size: 26px !important;
+          padding: 10px 15px !important;
+          line-height: 1.4 !important;
+        }
+
+        .sidebar-menu > li > a > .fa,
+        .sidebar-menu > li > a > .glyphicon,
+        .sidebar-menu > li > a > i {
+          font-size: 26px !important;
+          width: 30px !important;
+          margin-right: 10px !important;
+        }
+
+        .main-header {
+          display: flex !important;
+          align-items: stretch !important;
+        }
+
+        .main-header .logo {
+          order: 2 !important;
+          float: none !important;
+          font-size: 32px !important;
+          height: 90px !important;
+          line-height: normal !important;
+          display: flex !important;
+          align-items: center !important;
+        }
+
+        .main-header .logo > span {
+          display: flex !important;
+          align-items: center !important;
+          gap: 10px !important;
+        }
+
+        .main-header .navbar {
+          order: 1 !important;
+          float: none !important;
+          margin-left: 0 !important;
+          width: auto !important;
+          flex-shrink: 0 !important;
+          min-height: 90px !important;
+        }
+
+        .main-header .navbar .sidebar-toggle {
+          float: none !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          height: 90px !important;
+          padding: 0 20px !important;
+        }
+
+        .main-header .navbar .navbar-custom-menu {
+          float: none !important;
+        }
+
+        .main-sidebar, .left-side {
+          padding-top: 90px !important;
+        }
+
+        .content-wrapper, .right-side, .main-footer {
+          margin-top: 0 !important;
+        }
+
         .content-wrapper, .right-side {
           background: linear-gradient(135deg, #EEF2FF 0%, #F3E8FF 50%, #DBEAFE 100%);
         }
@@ -25,7 +94,58 @@ app_styles <- function() {
           background-color: ", colors$primary, " !important;
         }
 
+        /* ============= FILTER SECTION INPUTS ============= */
+        .filter-label {
+          font-size: 24px !important;
+          font-weight: 600 !important;
+          color: #4B5563 !important;
+          display: flex !important;
+          align-items: center !important;
+          gap: 8px !important;
+          margin-bottom: 8px !important;
+        }
+
+        .filter-label svg {
+          color: #667EEA;
+          flex-shrink: 0;
+        }
+
+        .filter-section .selectize-input,
+        .filter-section .selectize-input input {
+          font-size: 20px !important;
+          min-height: 52px !important;
+          padding: 12px 16px !important;
+          display: flex !important;
+          align-items: center !important;
+        }
+
+        .filter-section .selectize-dropdown,
+        .filter-section .selectize-dropdown .option {
+          font-size: 20px !important;
+          padding: 10px 16px !important;
+        }
+
+        .filter-section input[type=text] {
+          font-size: 20px !important;
+          height: 56px !important;
+          padding: 12px 16px !important;
+        }
+
+        .filter-section input[type=text]::placeholder {
+          font-size: 20px !important;
+        }
+
         /* ============= STYLES HOME ============= */
+        .projects-header {
+          background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+          border-radius: 16px;
+          padding: 28px 36px;
+          margin-bottom: 24px;
+          display: flex;
+          align-items: center;
+          box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
         .page-title {
           font-size: 32px;
           font-weight: bold;
@@ -42,56 +162,59 @@ app_styles <- function() {
         }
 
         .project-card {
-          background: white;
+          background: linear-gradient(135deg, #EEF2FF 0%, #F3E8FF 100%);
           border-radius: 12px;
           padding: 15px;
           margin-bottom: 20px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+          border: 1px solid rgba(102, 126, 234, 0.15);
           transition: transform 0.2s, box-shadow 0.2s;
           cursor: pointer;
         }
 
         .project-card:hover {
           transform: translateY(-5px);
-          box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+          background: linear-gradient(135deg, #C7D2FE 0%, #DDD6FE 100%);
+          box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+          border-color: rgba(102, 126, 234, 0.5);
         }
 
         .project-image {
-          width: 80px;
-          height: 80px;
+          width: 200px;
+          height: 200px;
           background: ", colors$bg_light, ";
           border-radius: 8px;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 40px;
+          font-size: 100px;
           margin-bottom: 10px;
         }
 
         .project-title {
-          font-size: 16px;
+          font-size: 24px;
           font-weight: bold;
           color: ", colors$dark, ";
           margin-bottom: 5px;
         }
 
         .project-category {
-          font-size: 13px;
-          color: ", colors$text_gray, ";
+          font-size: 22px;
+          color: #374151;
           margin-bottom: 5px;
         }
 
         .project-status {
-          font-size: 13px;
+          font-size: 20px;
           font-weight: bold;
           margin-bottom: 10px;
         }
 
         .progress-bar-container {
           width: 100%;
-          height: 8px;
-          background: ", colors$border, ";
-          border-radius: 4px;
+          height: 14px;
+          background: #C4C9D4;
+          border-radius: 7px;
           overflow: hidden;
           margin-bottom: 5px;
         }
@@ -103,18 +226,18 @@ app_styles <- function() {
         }
 
         .progress-percent {
-          font-size: 14px;
+          font-size: 20px;
           font-weight: bold;
           color: ", colors$dark, ";
         }
 
         /* ============= STYLES PROJECT DASHBOARD ============= */
         .project-header {
-          background: white;
+          background: linear-gradient(135deg, #EEF2FF 0%, #F3E8FF 100%);
           border-radius: 16px;
           padding: 25px;
           margin-bottom: 20px;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+          box-shadow: 0 10px 30px rgba(102,126,234,0.12);
         }
 
         .project-header:hover {
@@ -138,7 +261,7 @@ app_styles <- function() {
           border-radius: 12px;
           border: none;
           font-weight: 600;
-          font-size: 15px;
+          font-size: 20px;
           cursor: pointer;
           transition: all 0.3s ease;
           background: #F3F4F6;
@@ -266,11 +389,11 @@ app_styles <- function() {
         }
 
         .status-badge {
-          padding: 10px 20px;
-          background: ", colors$live, ";
+          display: inline-block;
+          padding: 5px 14px;
           color: white;
           border-radius: 20px;
-          font-size: 14px;
+          font-size: 15px;
           font-weight: bold;
         }
 
@@ -490,7 +613,7 @@ app_styles <- function() {
         }
 
         .ai-model-subtitle {
-          font-size: 13px;
+          font-size: 15px;
           opacity: 0.8;
         }
 
@@ -550,18 +673,18 @@ app_styles <- function() {
         }
 
         .ai-metric-label {
-          font-size: 11px;
+          font-size: 13px;
           opacity: 0.8;
           margin-bottom: 5px;
         }
 
         .ai-metric-value {
-          font-size: 20px;
+          font-size: 22px;
           font-weight: bold;
         }
 
         .ai-card-footer {
-          font-size: 12px;
+          font-size: 14px;
           opacity: 0.7;
           text-align: center;
           margin-top: 10px;
@@ -631,7 +754,7 @@ app_styles <- function() {
         }
 
         .ai-analysis-subtitle {
-          font-size: 14px;
+          font-size: 16px;
           color: #6B7280;
           font-weight: normal;
         }
@@ -646,7 +769,7 @@ app_styles <- function() {
         }
 
         .ai-detail-header {
-          font-size: 16px;
+          font-size: 18px;
           font-weight: bold;
           margin-bottom: 15px;
           display: flex;
@@ -673,7 +796,7 @@ app_styles <- function() {
         }
 
         .ai-detail-label {
-          font-size: 14px;
+          font-size: 16px;
           color: #6B7280;
           display: flex;
           align-items: center;
@@ -697,7 +820,7 @@ app_styles <- function() {
         }
 
         .ai-factor-name {
-          font-size: 14px;
+          font-size: 16px;
           margin-bottom: 5px;
           color: #6B7280;
         }
@@ -715,7 +838,7 @@ app_styles <- function() {
         .ai-badge {
           padding: 3px 10px;
           border-radius: 12px;
-          font-size: 11px;
+          font-size: 13px;
           font-weight: 600;
         }
 
@@ -746,7 +869,7 @@ app_styles <- function() {
         }
 
         .ai-comparison-header {
-          font-size: 18px;
+          font-size: 20px;
           font-weight: bold;
           margin-bottom: 20px;
           display: flex;
@@ -787,7 +910,7 @@ app_styles <- function() {
         }
 
         .ai-compare-subtitle {
-          font-size: 11px;
+          font-size: 13px;
           color: #95A5A6;
         }
 
@@ -818,7 +941,7 @@ app_styles <- function() {
         }
 
         .ai-gap-label {
-          font-size: 12px;
+          font-size: 14px;
           color: #6B7280;
           margin-bottom: 5px;
         }
@@ -920,7 +1043,7 @@ app_styles <- function() {
         }
         
         .analytics-stat-label {
-          font-size: 13px;
+          font-size: 15px;
           color: #95A5A6;
           margin-bottom: 5px;
           font-weight: 600;

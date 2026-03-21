@@ -44,15 +44,15 @@ ai_tab_ui <- function() {
                    # Three Key Metrics
                    div(class = "ai-metrics-grid",
                        div(class = "ai-metric-item",
-                           div(class = "ai-metric-label", "Pattern Recognition"),
+                           div(class = "ai-metric-label", "Precision"),
                            div(class = "ai-metric-value", textOutput("oracle_pattern", inline = TRUE))
                        ),
                        div(class = "ai-metric-item",
-                           div(class = "ai-metric-label", "Historical Accuracy"),
+                           div(class = "ai-metric-label", "Accuracy"),
                            div(class = "ai-metric-value", textOutput("oracle_accuracy", inline = TRUE))
                        ),
                        div(class = "ai-metric-item",
-                           div(class = "ai-metric-label", "Neighbor Analysis"),
+                           div(class = "ai-metric-label", "Recall"),
                            div(class = "ai-metric-value", textOutput("oracle_neighbor", inline = TRUE))
                        )
                    ),
@@ -96,15 +96,15 @@ ai_tab_ui <- function() {
                    # Three Key Metrics
                    div(class = "ai-metrics-grid",
                        div(class = "ai-metric-item",
-                           div(class = "ai-metric-label", "Multi-factor Analysis"),
+                           div(class = "ai-metric-label", "F1 Score"),
                            div(class = "ai-metric-value", textOutput("sage_multifactor", inline = TRUE))
                        ),
                        div(class = "ai-metric-item",
-                           div(class = "ai-metric-label", "Robustness"),
+                           div(class = "ai-metric-label", "Recall"),
                            div(class = "ai-metric-value", textOutput("sage_robustness", inline = TRUE))
                        ),
                        div(class = "ai-metric-item",
-                           div(class = "ai-metric-label", "Feature Importance"),
+                           div(class = "ai-metric-label", "Precision"),
                            div(class = "ai-metric-value", textOutput("sage_feature", inline = TRUE))
                        )
                    ),
@@ -137,151 +137,32 @@ ai_tab_ui <- function() {
                        )
                    ),
                    
-                   fluidRow(
-                     # Left: Prediction Details
-                     column(6,
-                            div(class = "ai-detail-box oracle-detail",
-                                div(class = "ai-detail-header",
-                                    icon("bullseye", style = "margin-right: 8px;"),
-                                    "Prediction Details"
-                                ),
-                                div(class = "ai-detail-list",
-                                    div(class = "ai-detail-item",
-                                        div(class = "ai-detail-label",
-                                            icon("rocket", style = "margin-right: 8px;"),
-                                            "Funding Pace"
-                                        ),
-                                        div(class = "ai-detail-value", "+23%")
-                                    ),
-                                    div(class = "ai-detail-item",
-                                        div(class = "ai-detail-label",
-                                            icon("smile", style = "margin-right: 8px;"),
-                                            "Sentiment Score"
-                                        ),
-                                        div(class = "ai-detail-value", "72%")
-                                    ),
-                                    div(class = "ai-detail-item",
-                                        div(class = "ai-detail-label",
-                                            icon("bolt", style = "margin-right: 8px;"),
-                                            "Activity Level"
-                                        ),
-                                        div(class = "ai-detail-value", "3.2x avg")
-                                    ),
-                                    div(class = "ai-detail-item",
-                                        div(class = "ai-detail-label",
-                                            icon("chart-line", style = "margin-right: 8px;"),
-                                            "Category Success"
-                                        ),
-                                        div(class = "ai-detail-value", "75% rate")
-                                    )
-                                )
-                            )
-                     ),
-                     
-                     # Right: Top Success Factors
-                     column(6,
-                            div(class = "ai-detail-box oracle-detail",
-                                div(class = "ai-detail-header",
-                                    icon("fire", style = "margin-right: 8px;"),
-                                    "Top Success Factors"
-                                ),
-                                div(class = "ai-factor-list",
-                                    div(class = "ai-factor-item",
-                                        div(class = "ai-factor-name", "Communication"),
-                                        div(class = "ai-factor-score",
-                                            "92%",
-                                            tags$span(class = "ai-badge hot", "Hot")
-                                        ),
-                                        div(class = "ai-factor-bar",
-                                            div(style = "width: 92%; background: #F59E0B; height: 6px; border-radius: 3px;")
-                                        )
-                                    ),
-                                    div(class = "ai-factor-item",
-                                        div(class = "ai-factor-name", "Similar Success Rate"),
-                                        div(class = "ai-factor-score",
-                                            "88%",
-                                            tags$span(class = "ai-badge hot", "Hot")
-                                        ),
-                                        div(class = "ai-factor-bar",
-                                            div(style = "width: 88%; background: #F59E0B; height: 6px; border-radius: 3px;")
-                                        )
-                                    ),
-                                    div(class = "ai-factor-item",
-                                        div(class = "ai-factor-name", "Backer Engagement"),
-                                        div(class = "ai-factor-score",
-                                            "85%",
-                                            tags$span(class = "ai-badge medium", "Medium")
-                                        ),
-                                        div(class = "ai-factor-bar",
-                                            div(style = "width: 85%; background: #F59E0B; height: 6px; border-radius: 3px;")
-                                        )
-                                    )
-                                )
-                            )
-                     )
-                   ),
-                   
                    # Comparison Section
                    fluidRow(
                      column(12,
                             div(class = "ai-comparison-box oracle-comparison",
                                 div(class = "ai-comparison-header",
                                     icon("balance-scale", style = "margin-right: 8px;"),
-                                    "The Oracle vs The Sage"
+                                    "Model Comparison"
                                 ),
-                                
-                                fluidRow(
-                                  # Oracle side
-                                  column(5,
-                                         div(class = "ai-compare-item oracle-compare",
-                                             div(class = "ai-compare-model",
-                                                 div(class = "ai-compare-icon oracle-icon",
-                                                     tags$img(src = "crystalBall.png", style = "width: 26px; height: 26px; object-fit: contain;")
-                                                 ),
-                                                 div(class = "ai-compare-info",
-                                                     div("The Oracle"),
-                                                     div(class = "ai-compare-subtitle", "KNN Classifier")
-                                                 )
-                                             ),
-                                             div(class = "ai-compare-prediction", "91%"),
-                                             div(class = "ai-compare-bar",
-                                                 div(style = "width: 91%; background: linear-gradient(90deg, #5B6AD4 0%, #8491E8 100%); height: 8px; border-radius: 4px;")
-                                             ),
-                                             div(class = "ai-compare-confidence", "94% confident")
-                                         )
-                                  ),
-                                  
-                                  # Gap indicator
-                                  column(2,
-                                         div(class = "ai-gap-indicator",
-                                             div(class = "ai-gap-label", "Prediction Difference:"),
-                                             div(class = "ai-gap-value", "4% gap"),
-                                             div(class = "ai-gap-note",
-                                                 icon("check-circle", style = "color: #2A8F74; margin-right: 5px;"),
-                                                 "Both models strongly agree!"
-                                             )
-                                         )
-                                  ),
-                                  
-                                  # Sage side
-                                  column(5,
-                                         div(class = "ai-compare-item sage-compare",
-                                             div(class = "ai-compare-model",
-                                                 div(class = "ai-compare-icon sage-icon",
-                                                     tags$img(src = "wizard.png", style = "width: 26px; height: 26px; object-fit: contain;")
-                                                 ),
-                                                 div(class = "ai-compare-info",
-                                                     div("The Sage"),
-                                                     div(class = "ai-compare-subtitle", "Random Forest")
-                                                 )
-                                             ),
-                                             div(class = "ai-compare-prediction", "87%"),
-                                             div(class = "ai-compare-bar",
-                                                 div(style = "width: 87%; background: linear-gradient(90deg, #1E7A61 0%, #2A8F74 100%); height: 8px; border-radius: 4px;")
-                                             ),
-                                             div(class = "ai-compare-confidence", "91% confident")
-                                         )
-                                  )
+                                div(style = "display:flex;align-items:center;justify-content:space-around;padding:20px 0;",
+
+                                    div(style = "text-align:center;",
+                                        tags$img(src = "crystalBall.png", style = "width:80px;height:80px;object-fit:contain;margin-bottom:10px;"),
+                                        div(style = "font-weight:700;font-size:15px;color:#2C3E50;", "The Oracle"),
+                                        div(style = "font-size:12px;color:#6B7280;", "KNN Classifier")
+                                    ),
+
+                                    div(class = "ai-gap-indicator",
+                                        div(class = "ai-gap-label", "Prediction Difference"),
+                                        div(class = "ai-gap-value", "4% gap")
+                                    ),
+
+                                    div(style = "text-align:center;",
+                                        tags$img(src = "wizard.png", style = "width:80px;height:80px;object-fit:contain;margin-bottom:10px;"),
+                                        div(style = "font-weight:700;font-size:15px;color:#2C3E50;", "The Sage"),
+                                        div(style = "font-size:12px;color:#6B7280;", "Random Forest")
+                                    )
                                 )
                             )
                      )
@@ -311,125 +192,52 @@ ai_tab_ui <- function() {
                        )
                    ),
                    
+                   # Top Success Factors — full width, real data from Fait_detail_facteurs
                    fluidRow(
-                     # Left: Prediction Details
-                     column(6,
-                            div(class = "ai-detail-box sage-detail",
-                                div(class = "ai-detail-header",
-                                    icon("bullseye", style = "margin-right: 8px;"),
-                                    "Prediction Details"
-                                ),
-                                div(class = "ai-detail-list",
-                                    div(class = "ai-detail-item",
-                                        div(class = "ai-detail-label",
-                                            icon("rocket", style = "margin-right: 8px;"),
-                                            "Funding Pace"
-                                        ),
-                                        div(class = "ai-detail-value", "+19%")
-                                    ),
-                                    div(class = "ai-detail-item",
-                                        div(class = "ai-detail-label",
-                                            icon("smile", style = "margin-right: 8px;"),
-                                            "Sentiment Score"
-                                        ),
-                                        div(class = "ai-detail-value", "68%")
-                                    ),
-                                    div(class = "ai-detail-item",
-                                        div(class = "ai-detail-label",
-                                            icon("bolt", style = "margin-right: 8px;"),
-                                            "Activity Level"
-                                        ),
-                                        div(class = "ai-detail-value", "2.8x avg")
-                                    ),
-                                    div(class = "ai-detail-item",
-                                        div(class = "ai-detail-label",
-                                            icon("chart-line", style = "margin-right: 8px;"),
-                                            "Category Success"
-                                        ),
-                                        div(class = "ai-detail-value", "71% rate")
-                                    )
-                                )
-                            )
-                     ),
-                     
-                     # Right: Top Success Factors
-                     column(6,
+                     column(12,
                             div(class = "ai-detail-box sage-detail",
                                 div(class = "ai-detail-header",
                                     icon("fire", style = "margin-right: 8px;"),
-                                    "Top Success Factors"
+                                    "Top Success Factors",
+                                    tags$span(style = "font-size:12px;color:#6B7280;margin-left:10px;font-weight:400;",
+                                              "(Random Forest feature importance)")
                                 ),
                                 uiOutput("sage_factors_ui")
                             )
                      )
                    ),
-                   
-                   # Comparison Section (reversed)
+
+                   # Comparison Section
                    fluidRow(
                      column(12,
                             div(class = "ai-comparison-box sage-comparison",
                                 div(class = "ai-comparison-header",
                                     icon("balance-scale", style = "margin-right: 8px;"),
-                                    "The Sage vs The Oracle"
+                                    "Model Comparison"
                                 ),
-                                
-                                fluidRow(
-                                  # Sage side
-                                  column(5,
-                                         div(class = "ai-compare-item sage-compare",
-                                             div(class = "ai-compare-model",
-                                                 div(class = "ai-compare-icon sage-icon",
-                                                     tags$img(src = "wizard.png", style = "width: 26px; height: 26px; object-fit: contain;")
-                                                 ),
-                                                 div(class = "ai-compare-info",
-                                                     div("The Sage"),
-                                                     div(class = "ai-compare-subtitle", "Random Forest")
-                                                 )
-                                             ),
-                                             div(class = "ai-compare-prediction", "87%"),
-                                             div(class = "ai-compare-bar",
-                                                 div(style = "width: 87%; background: linear-gradient(90deg, #1E7A61 0%, #2A8F74 100%); height: 8px; border-radius: 4px;")
-                                             ),
-                                             div(class = "ai-compare-confidence", "91% confident")
-                                         )
-                                  ),
-                                  
-                                  # Gap indicator
-                                  column(2,
-                                         div(class = "ai-gap-indicator",
-                                             div(class = "ai-gap-label", "Prediction Difference:"),
-                                             div(class = "ai-gap-value", "4% gap"),
-                                             div(class = "ai-gap-note",
-                                                 icon("check-circle", style = "color: #2A8F74; margin-right: 5px;"),
-                                                 "Both models strongly agree!"
-                                             )
-                                         )
-                                  ),
-                                  
-                                  # Oracle side
-                                  column(5,
-                                         div(class = "ai-compare-item oracle-compare",
-                                             div(class = "ai-compare-model",
-                                                 div(class = "ai-compare-icon oracle-icon",
-                                                     tags$img(src = "crystalBall.png", style = "width: 26px; height: 26px; object-fit: contain;")
-                                                 ),
-                                                 div(class = "ai-compare-info",
-                                                     div("The Oracle"),
-                                                     div(class = "ai-compare-subtitle", "KNN Classifier")
-                                                 )
-                                             ),
-                                             div(class = "ai-compare-prediction", "91%"),
-                                             div(class = "ai-compare-bar",
-                                                 div(style = "width: 91%; background: linear-gradient(90deg, #5B6AD4 0%, #8491E8 100%); height: 8px; border-radius: 4px;")
-                                             ),
-                                             div(class = "ai-compare-confidence", "94% confident")
-                                         )
-                                  )
+                                div(style = "display:flex;align-items:center;justify-content:space-around;padding:20px 0;",
+
+                                    div(style = "text-align:center;",
+                                        tags$img(src = "wizard.png", style = "width:80px;height:80px;object-fit:contain;margin-bottom:10px;"),
+                                        div(style = "font-weight:700;font-size:15px;color:#2C3E50;", "The Sage"),
+                                        div(style = "font-size:12px;color:#6B7280;", "Random Forest")
+                                    ),
+
+                                    div(class = "ai-gap-indicator",
+                                        div(class = "ai-gap-label", "Prediction Difference"),
+                                        div(class = "ai-gap-value", "4% gap")
+                                    ),
+
+                                    div(style = "text-align:center;",
+                                        tags$img(src = "crystalBall.png", style = "width:80px;height:80px;object-fit:contain;margin-bottom:10px;"),
+                                        div(style = "font-weight:700;font-size:15px;color:#2C3E50;", "The Oracle"),
+                                        div(style = "font-size:12px;color:#6B7280;", "KNN Classifier")
+                                    )
                                 )
                             )
                      )
                    ),
-                   
+
                    # Switch Button
                    div(style = "text-align: center; margin-top: 20px;",
                        actionButton("switch_to_oracle",

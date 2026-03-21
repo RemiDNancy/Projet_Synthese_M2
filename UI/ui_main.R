@@ -17,7 +17,7 @@ ui <- dashboardPage(
   # HEADER with the logo
   dashboardHeader(
     title = span(
-      tags$img(src = "logoKickinsightv2.png", height = "40px", style = "vertical-align: middle; margin-right: 8px;"),
+      tags$img(src = "logoKickinsightv2.png", height = "65px", style = "display: block;"),
       "KickInsight"
     ),
     titleWidth = 300
@@ -25,7 +25,7 @@ ui <- dashboardPage(
 
   # SIDEBAR
   dashboardSidebar(
-    width = 200,
+    width = 380,
     sidebarMenu(
       id = "sidebar",
       menuItem("Home", tabName = "home", icon = icon("home")),

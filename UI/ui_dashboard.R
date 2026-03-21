@@ -14,16 +14,13 @@ dashboard_header_ui <- function() {
     fluidRow(
       column(12,
              tags$p(
-               style = "color: #95A5A6; font-size: 14px; margin-bottom: 20px;",
+               style = "margin-bottom: 20px;",
                tags$a(
                  icon("arrow-left"), " Back to Projects",
                  href    = "#",
                  onclick = "Shiny.setInputValue('goto_home', Math.random(), {priority: 'event'})",
-                 style   = "color: #667EEA; text-decoration: none; font-weight: 600;"
-               ),
-               " \u2192 ",
-               tags$strong(textOutput("current_project_name", inline = TRUE),
-                           style = "color: #2C3E50;")
+                 style   = "display: inline-block; background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%); color: white; text-decoration: none; font-weight: 700; font-size: 18px; padding: 10px 22px; border-radius: 10px; box-shadow: 0 4px 12px rgba(102,126,234,0.35); transition: all 0.2s ease;"
+               )
              )
       )
     ),
@@ -35,47 +32,47 @@ dashboard_header_ui <- function() {
                  fluidRow(
                    
                    # Colonne image
-                   column(2, uiOutput("project_image")),
-                   
+                   column(4, uiOutput("project_image")),
+
                    # Colonne infos principales
-                   column(6,
-                          div(style = "font-size: 28px; font-weight: bold; color: #2C3E50; margin-bottom: 10px;",
+                   column(4,
+                          div(style = "font-size: 34px; font-weight: bold; color: #2C3E50; margin-bottom: 12px;",
                               textOutput("project_title", inline = TRUE)),
-                          div(style = "color: #95A5A6; font-size: 14px; margin-bottom: 15px;",
+                          div(style = "color: #4B5563; font-size: 22px; margin-bottom: 18px;",
                               textOutput("project_category_breadcrumb", inline = TRUE)),
-                          div(style = "margin-bottom: 15px;",
-                              tags$span("Creator: ", style = "color: #95A5A6; font-size: 14px;"),
+                          div(style = "margin-bottom: 18px;",
+                              tags$span("Creator: ", style = "color: #6B7280; font-size: 20px;"),
                               tags$strong(textOutput("project_creator", inline = TRUE),
-                                          style = "color: #667EEA; font-size: 14px;")
+                                          style = "color: #667EEA; font-size: 20px;")
                           ),
-                          uiOutput("project_we_love_badge"),   # badge conditionnel
-                          uiOutput("project_kickstarter_link") # lien externe
+                          uiOutput("project_we_love_badge"),
+                          uiOutput("project_kickstarter_link")
                    ),
-                   
+
                    # Colonne dates + statut
                    column(4,
                           fluidRow(
                             column(6,
                                    div(style = "background: #EEF2FF; border-radius: 12px; padding: 15px; text-align: center;",
                                        div(style = "color: #667EEA; margin-bottom: 8px;",
-                                           icon("calendar", class = "fa-lg")),
-                                       div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;", "Start Date"),
-                                       div(style = "font-weight: bold; color: #2C3E50;",
+                                           icon("calendar", class = "fa-2x")),
+                                       div(style = "font-size: 18px; color: #6B7280; margin-bottom: 5px; font-weight: 600;", "Start Date"),
+                                       div(style = "font-size: 24px; font-weight: bold; color: #2C3E50;",
                                            textOutput("project_start_date", inline = TRUE))
                                    )
                             ),
                             column(6,
                                    div(style = "background: #EEF2FF; border-radius: 12px; padding: 15px; text-align: center;",
                                        div(style = "color: #9B59B6; margin-bottom: 8px;",
-                                           icon("calendar", class = "fa-lg")),
-                                       div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;", "End Date"),
-                                       div(style = "font-weight: bold; color: #2C3E50;",
+                                           icon("calendar", class = "fa-2x")),
+                                       div(style = "font-size: 18px; color: #6B7280; margin-bottom: 5px; font-weight: 600;", "End Date"),
+                                       div(style = "font-size: 24px; font-weight: bold; color: #2C3E50;",
                                            textOutput("project_end_date", inline = TRUE))
                                    )
                             )
                           ),
                           div(style = "margin-top: 15px; text-align: center;",
-                              div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 8px;", "Status"),
+                              div(style = "font-size: 18px; color: #6B7280; margin-bottom: 8px; font-weight: 600;", "Status"),
                               uiOutput("project_status_badge")
                           )
                    )
@@ -105,34 +102,34 @@ overview_tab_ui <- function() {
                        "Funding Overview"),
                    fluidRow(
                      # Pie chart : % collecté vs restant
-                     column(6, plotlyOutput("overview_pie", height = "220px")),
+                     column(6, plotlyOutput("overview_pie", height = "320px")),
                      # Chiffres clés : montant collecté, objectif, contributeurs
                      column(6,
                             div(class = "mini-stat",
-                                div(style = "display: flex; align-items: center; margin-bottom: 5px;",
-                                    icon("dollar-sign", style = "color: #667EEA; margin-right: 8px;"),
+                                div(style = "display: flex; align-items: center; margin-bottom: 6px;",
+                                    icon("dollar-sign", style = "color: #667EEA; margin-right: 8px; font-size: 18px;"),
                                     tags$span("Collected",
-                                              style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
+                                              style = "font-size: 17px; color: #374151; font-weight: 600;")
                                 ),
-                                div(style = "font-size: 28px; font-weight: bold; color: #667EEA;",
+                                div(style = "font-size: 44px; font-weight: bold; color: #4C1D95; line-height: 1.1;",
                                     textOutput("project_collected", inline = TRUE))
                             ),
                             div(class = "mini-stat",
-                                div(style = "display: flex; align-items: center; margin-bottom: 5px;",
-                                    icon("bullseye", style = "color: #2C3E50; margin-right: 8px;"),
+                                div(style = "display: flex; align-items: center; margin-bottom: 6px;",
+                                    icon("bullseye", style = "color: #2C3E50; margin-right: 8px; font-size: 18px;"),
                                     tags$span("Goal",
-                                              style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
+                                              style = "font-size: 17px; color: #374151; font-weight: 600;")
                                 ),
-                                div(style = "font-size: 22px; font-weight: bold; color: #2C3E50;",
+                                div(style = "font-size: 36px; font-weight: bold; color: #1F2937; line-height: 1.1;",
                                     textOutput("project_goal", inline = TRUE))
                             ),
                             div(class = "mini-stat",
-                                div(style = "display: flex; align-items: center; margin-bottom: 5px;",
-                                    icon("users", style = "color: #9B59B6; margin-right: 8px;"),
+                                div(style = "display: flex; align-items: center; margin-bottom: 6px;",
+                                    icon("users", style = "color: #9B59B6; margin-right: 8px; font-size: 18px;"),
                                     tags$span("Contributors",
-                                              style = "font-size: 11px; color: #95A5A6; font-weight: 600;")
+                                              style = "font-size: 17px; color: #374151; font-weight: 600;")
                                 ),
-                                div(style = "font-size: 22px; font-weight: bold; color: #2C3E50;",
+                                div(style = "font-size: 36px; font-weight: bold; color: #1F2937; line-height: 1.1;",
                                     textOutput("project_backers", inline = TRUE))
                             )
                      )
@@ -148,33 +145,33 @@ overview_tab_ui <- function() {
                        
                        # Moyenne quotidienne collectée (converti en EUR)
                        div(class = "quick-stat green",
-                           div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;",
+                           div(style = "font-size: 17px; color: #374151; margin-bottom: 8px; font-weight: 600;",
                                "Daily Average"),
-                           div(style = "font-size: 24px; font-weight: bold; color: #059669;",
+                           div(style = "font-size: 38px; font-weight: bold; color: #059669; line-height: 1.1;",
                                textOutput("stat_daily_avg", inline = TRUE))
                        ),
-                       
+
                        # Jours restants avant la deadline (calculé depuis date_deadline)
                        div(class = "quick-stat blue",
-                           div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;",
+                           div(style = "font-size: 17px; color: #374151; margin-bottom: 8px; font-weight: 600;",
                                "Days Remaining"),
-                           div(style = "font-size: 24px; font-weight: bold; color: #2563EB;",
+                           div(style = "font-size: 38px; font-weight: bold; color: #2563EB; line-height: 1.1;",
                                textOutput("stat_days_remaining", inline = TRUE))
                        ),
-                       
+
                        # Funding velocity : Above / Average / Below (vs moyenne de la catégorie)
                        div(class = "quick-stat orange",
-                           div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;",
+                           div(style = "font-size: 17px; color: #374151; margin-bottom: 8px; font-weight: 600;",
                                "Funding Velocity"),
-                           div(style = "font-size: 24px; font-weight: bold; color: #F39C12;",
+                           div(style = "font-size: 38px; font-weight: bold; color: #F39C12; line-height: 1.1;",
                                textOutput("stat_funding_velocity", inline = TRUE))
                        ),
-                       
+
                        # Backers growth : moyenne quotidienne de nouveaux contributeurs
                        div(class = "quick-stat purple",
-                           div(style = "font-size: 11px; color: #95A5A6; margin-bottom: 5px;",
+                           div(style = "font-size: 17px; color: #374151; margin-bottom: 8px; font-weight: 600;",
                                "Backers Growth"),
-                           div(style = "font-size: 24px; font-weight: bold; color: #9B59B6;",
+                           div(style = "font-size: 38px; font-weight: bold; color: #9B59B6; line-height: 1.1;",
                                textOutput("stat_backers_growth", inline = TRUE))
                        )
                    )

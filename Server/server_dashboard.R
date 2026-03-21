@@ -131,7 +131,7 @@ dashboard_server <- function(input, output, session, selected_project_id) {
     if (!is.null(p)) {
       tags$img(
         src   = p$image_url,
-        style = "width: 180px; height: 240px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.2);"
+        style = "width: 450px; height: auto; max-height: 500px; border-radius: 12px; object-fit: contain; background: transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.2);"
       )
     }
   })
@@ -164,8 +164,9 @@ dashboard_server <- function(input, output, session, selected_project_id) {
       tagList(
         tags$br(),
         tags$a(href = p$url, target = "_blank",
-               style = "color: #667EEA; font-weight: 600; text-decoration: none;",
-               "View on Kickstarter →")
+               style = "color: #05CE78; font-weight: 600; text-decoration: none; font-size: 18px; display: inline-flex; align-items: center; gap: 8px;",
+               tags$i(class = "fab fa-kickstarter-k", style = "font-size: 26px; color: #05CE78;"),
+               "View on Kickstarter")
       )
     }
   })
@@ -187,7 +188,13 @@ dashboard_server <- function(input, output, session, selected_project_id) {
   output$project_status_badge <- renderUI({
     p <- current_project()
     if (!is.null(p)) {
-      div(class = "status-badge", p$status)
+      badge_color <- switch(p$status,
+        "Successful" = "#166534",
+        "Live"       = "#2563EB",
+        "Failed"     = "#991B1B",
+        "#667EEA"
+      )
+      div(class = "status-badge", style = sprintf("background-color: %s;", badge_color), p$status)
     }
   })
   
@@ -228,15 +235,19 @@ dashboard_server <- function(input, output, session, selected_project_id) {
     overview_data <- data.frame(
       label = c("Collected", "Remaining"),
       value = c(collected_pct, remaining_pct),
-      color = c(colors$indigo_light, colors$warning)
+      color = c("#4C1D95", "#C4B5FD")
     )
-    
+
     plot_ly(data = overview_data, labels = ~label, values = ~value, type = 'pie',
-            marker = list(colors = ~color), textinfo = 'percent',
+            marker = list(colors = ~color),
+            textinfo = 'percent',
+            textposition = 'inside',
+            textfont = list(size = 20),
+            domain = list(x = c(0, 1), y = c(0.15, 1)),
             hoverinfo = 'label+percent', showlegend = TRUE) %>%
       layout(paper_bgcolor = 'rgba(0,0,0,0)', plot_bgcolor = 'rgba(0,0,0,0)',
-             margin = list(l = 0, r = 0, t = 0, b = 0),
-             legend = list(orientation = 'h', x = 0.5, xanchor = 'center', y = -0.1)) %>%
+             margin = list(l = 20, r = 20, t = 20, b = 20),
+             legend = list(orientation = 'h', x = 0.5, xanchor = 'center', y = 0.05)) %>%
       config(displayModeBar = FALSE)
   })
   

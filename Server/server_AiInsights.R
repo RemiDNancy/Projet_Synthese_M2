@@ -243,33 +243,11 @@ ai_server <- function(input, output, session, current_project) {
     rf_pct  <- round(rf_raw)
     gap     <- if (!is.na(gap_raw)) round(gap_raw) else abs(knn_pct - rf_pct)
 
-    # Confiance = accuracy globale du modèle
-    knn_conf <- {
-      val <- get_metric(ai_metrics()$knn, "accuracy")
-      if (is.na(val)) knn_pct else round(val)
-    }
-    rf_conf <- {
-      val <- get_metric(ai_metrics()$rf, "accuracy")
-      if (is.na(val)) rf_pct else round(val)
-    }
-
-    agree_msg <- if (!is.na(gap) && gap <= 5) "Both models strongly agree!" else "Models show some divergence."
-
     shinyjs::runjs(sprintf("
       $('.oracle-fill').css('width', '%d%%');
       $('.sage-fill').css('width', '%d%%');
-      $('.oracle-compare .ai-compare-bar div').css('width', '%d%%');
-      $('.sage-compare  .ai-compare-bar div').css('width', '%d%%');
-      $('.oracle-compare .ai-compare-prediction').text('%d%%');
-      $('.sage-compare  .ai-compare-prediction').text('%d%%');
       $('.ai-gap-value').text('%d%% gap');
-      $('.oracle-compare .ai-compare-confidence').text('%d%% confident');
-      $('.sage-compare  .ai-compare-confidence').text('%d%% confident');
-      $('.ai-gap-note span:last-child').text('%s');
-    ", knn_pct, rf_pct, knn_pct, rf_pct,
-       knn_pct, rf_pct, gap,
-       knn_conf, rf_conf,
-       agree_msg))
+    ", knn_pct, rf_pct, gap))
   })
 
   # ── outputOptions ─────────────────────────────────────────────────────────
