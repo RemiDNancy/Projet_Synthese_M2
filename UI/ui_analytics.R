@@ -54,7 +54,7 @@ analytics_tab_ui <- function() {
       column(3,
              div(class = "analytics-stat-card",
                  div(class = "analytics-stat-icon blue",
-                     icon("dollar-sign", class = "fa-2x")
+                     icon("euro-sign", class = "fa-2x")
                  ),
                  div(class = "analytics-stat-content",
                      div(class = "analytics-stat-label", "Total Raised"),
@@ -91,7 +91,7 @@ analytics_tab_ui <- function() {
                      tags$span("Success Rate by Category", 
                                style = "font-size: 20px; font-weight: bold; color: #2C3E50;")
                  ),
-                 plotlyOutput("success_by_category", height = "400px")
+                 plotlyOutput("success_by_category", height = "600px")
              )
       ),
       
@@ -103,25 +103,10 @@ analytics_tab_ui <- function() {
                      tags$span("Projects by Country", 
                                style = "font-size: 20px; font-weight: bold; color: #2C3E50;")
                  ),
-                 plotlyOutput("projects_by_country", height = "400px")
+                 plotlyOutput("projects_by_country", height = "700px")
              )
       )
     ),
     
-    # ============================================================================
-    # BOTTOM SECTION - TIME SERIES CHART
-    # ============================================================================
-    fluidRow(
-      column(12,
-             div(class = "analytics-chart-box",
-                 div(class = "analytics-chart-header",
-                     icon("chart-line", style = "color: #667EEA; margin-right: 10px;"),
-                     tags$span("Projects Launched Over Time", 
-                               style = "font-size: 20px; font-weight: bold; color: #2C3E50;")
-                 ),
-                 plotlyOutput("projects_over_time", height = "400px")
-             )
-      )
-    )
   )
 }

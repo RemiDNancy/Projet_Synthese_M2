@@ -401,29 +401,29 @@ dashboard_server <- function(input, output, session, selected_project_id) {
     label_cat <- data$label_cat
     
     plot <- plot_ly() %>%
-      # Courbe 1 : progression du projet
+      # Courbe 1 : progression du projet — bleu vif
       add_trace(
         data = proj, x = ~date, y = ~ratio,
         name = 'Funding Progress', type = 'scatter', mode = 'lines+markers',
-        line   = list(color = colors$indigo_light, width = 4),
-        marker = list(color = colors$indigo_light, size = 8,
+        line   = list(color = '#1E90FF', width = 4),
+        marker = list(color = '#1E90FF', size = 8,
                       line = list(color = 'white', width = 2))
       ) %>%
-      # Courbe 2 : ligne constante Goal = 100%
+      # Courbe 2 : ligne Goal = 100% — violet profond
       add_trace(
         data = proj, x = ~date, y = rep(100, nrow(proj)),
         name = 'Goal (100%)', type = 'scatter', mode = 'lines',
-        line = list(color = colors$primary, width = 3, dash = 'dot')
+        line = list(color = '#6A0DAD', width = 3, dash = 'dot')
       )
-    
-    # Courbe 3 : moyenne catégorie (si disponible)
+
+    # Courbe 3 : moyenne catégorie — jaune
     if (!is.null(cat) && nrow(cat) > 0) {
       plot <- plot %>%
         add_trace(
           data = cat, x = ~date, y = ~avg_ratio,
           name = label_cat, type = 'scatter', mode = 'lines+markers',
-          line   = list(color = colors$purple_light, width = 3, dash = 'dash'),
-          marker = list(color = colors$purple_light, size = 6,
+          line   = list(color = '#F4C430', width = 3, dash = 'dash'),
+          marker = list(color = '#F4C430', size = 6,
                         line = list(color = 'white', width = 2))
         )
     }

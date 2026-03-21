@@ -245,7 +245,7 @@ ai_tab_ui <- function() {
                                              ),
                                              div(class = "ai-compare-prediction", "91%"),
                                              div(class = "ai-compare-bar",
-                                                 div(style = "width: 91%; background: linear-gradient(90deg, #9333EA 0%, #C084FC 100%); height: 8px; border-radius: 4px;")
+                                                 div(style = "width: 91%; background: linear-gradient(90deg, #5B6AD4 0%, #8491E8 100%); height: 8px; border-radius: 4px;")
                                              ),
                                              div(class = "ai-compare-confidence", "94% confident")
                                          )
@@ -257,7 +257,7 @@ ai_tab_ui <- function() {
                                              div(class = "ai-gap-label", "Prediction Difference:"),
                                              div(class = "ai-gap-value", "4% gap"),
                                              div(class = "ai-gap-note",
-                                                 icon("check-circle", style = "color: #10B981; margin-right: 5px;"),
+                                                 icon("check-circle", style = "color: #2A8F74; margin-right: 5px;"),
                                                  "Both models strongly agree!"
                                              )
                                          )
@@ -277,7 +277,7 @@ ai_tab_ui <- function() {
                                              ),
                                              div(class = "ai-compare-prediction", "87%"),
                                              div(class = "ai-compare-bar",
-                                                 div(style = "width: 87%; background: linear-gradient(90deg, #059669 0%, #10B981 100%); height: 8px; border-radius: 4px;")
+                                                 div(style = "width: 87%; background: linear-gradient(90deg, #1E7A61 0%, #2A8F74 100%); height: 8px; border-radius: 4px;")
                                              ),
                                              div(class = "ai-compare-confidence", "91% confident")
                                          )
@@ -292,7 +292,7 @@ ai_tab_ui <- function() {
                        actionButton("switch_to_sage",
                                     tagList(icon("exchange-alt"), " Switch to The Sage"),
                                     class = "ai-switch-btn",
-                                    style = "background: white; color: #059669; padding: 12px 30px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);")
+                                    style = "background: white; color: #1E7A61; padding: 12px 30px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);")
                    )
                ),
                
@@ -359,38 +359,7 @@ ai_tab_ui <- function() {
                                     icon("fire", style = "margin-right: 8px;"),
                                     "Top Success Factors"
                                 ),
-                                div(class = "ai-factor-list",
-                                    div(class = "ai-factor-item",
-                                        div(class = "ai-factor-name", "Reward Strategy"),
-                                        div(class = "ai-factor-score",
-                                            "89%",
-                                            tags$span(class = "ai-badge hot", "Hot")
-                                        ),
-                                        div(class = "ai-factor-bar",
-                                            div(style = "width: 89%; background: #10B981; height: 6px; border-radius: 3px;")
-                                        )
-                                    ),
-                                    div(class = "ai-factor-item",
-                                        div(class = "ai-factor-name", "Update Frequency"),
-                                        div(class = "ai-factor-score",
-                                            "87%",
-                                            tags$span(class = "ai-badge hot", "Hot")
-                                        ),
-                                        div(class = "ai-factor-bar",
-                                            div(style = "width: 87%; background: #10B981; height: 6px; border-radius: 3px;")
-                                        )
-                                    ),
-                                    div(class = "ai-factor-item",
-                                        div(class = "ai-factor-name", "Sentiment Trend"),
-                                        div(class = "ai-factor-score",
-                                            "84%",
-                                            tags$span(class = "ai-badge medium", "Medium")
-                                        ),
-                                        div(class = "ai-factor-bar",
-                                            div(style = "width: 84%; background: #10B981; height: 6px; border-radius: 3px;")
-                                        )
-                                    )
-                                )
+                                uiOutput("sage_factors_ui")
                             )
                      )
                    ),
@@ -419,7 +388,7 @@ ai_tab_ui <- function() {
                                              ),
                                              div(class = "ai-compare-prediction", "87%"),
                                              div(class = "ai-compare-bar",
-                                                 div(style = "width: 87%; background: linear-gradient(90deg, #059669 0%, #10B981 100%); height: 8px; border-radius: 4px;")
+                                                 div(style = "width: 87%; background: linear-gradient(90deg, #1E7A61 0%, #2A8F74 100%); height: 8px; border-radius: 4px;")
                                              ),
                                              div(class = "ai-compare-confidence", "91% confident")
                                          )
@@ -431,7 +400,7 @@ ai_tab_ui <- function() {
                                              div(class = "ai-gap-label", "Prediction Difference:"),
                                              div(class = "ai-gap-value", "4% gap"),
                                              div(class = "ai-gap-note",
-                                                 icon("check-circle", style = "color: #10B981; margin-right: 5px;"),
+                                                 icon("check-circle", style = "color: #2A8F74; margin-right: 5px;"),
                                                  "Both models strongly agree!"
                                              )
                                          )
@@ -451,7 +420,7 @@ ai_tab_ui <- function() {
                                              ),
                                              div(class = "ai-compare-prediction", "91%"),
                                              div(class = "ai-compare-bar",
-                                                 div(style = "width: 91%; background: linear-gradient(90deg, #9333EA 0%, #C084FC 100%); height: 8px; border-radius: 4px;")
+                                                 div(style = "width: 91%; background: linear-gradient(90deg, #5B6AD4 0%, #8491E8 100%); height: 8px; border-radius: 4px;")
                                              ),
                                              div(class = "ai-compare-confidence", "94% confident")
                                          )
@@ -466,7 +435,7 @@ ai_tab_ui <- function() {
                        actionButton("switch_to_oracle",
                                     tagList(icon("exchange-alt"), " Switch to The Oracle"),
                                     class = "ai-switch-btn",
-                                    style = "background: white; color: #9333EA; padding: 12px 30px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);")
+                                    style = "background: white; color: #5B6AD4; padding: 12px 30px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);")
                    )
                )
         )

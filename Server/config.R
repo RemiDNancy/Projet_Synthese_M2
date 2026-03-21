@@ -256,6 +256,33 @@ fetch_rewards_from_db <- function(project_id) {
 }
 
 # ============================================================================
+# Country normalization
+# Corrige les villes/états US et les variantes de noms qui parasitent le champ pays
+# ============================================================================
+us_state_codes <- c(
+  "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA",
+  "KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ",
+  "NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT",
+  "VA","WA","WV","WI","WY","DC"
+)
+
+us_exact <- c("USA", "US", "United States of America")
+
+normalize_country <- function(country) {
+  country <- trimws(as.character(country))
+  # Exact matches (standalone state code, "USA", etc.)
+  if (country %in% us_exact) return("United States")
+  if (country %in% us_state_codes) return("United States")
+  # "City, ST" format — detect trailing 2-letter US state code
+  parts <- trimws(strsplit(country, ",")[[1]])
+  if (length(parts) >= 2) {
+    last <- trimws(parts[length(parts)])
+    if (last %in% us_state_codes) return("United States")
+  }
+  country
+}
+
+# ============================================================================
 # Load data on startup
 # ============================================================================
 message("Loading projects from database...")
@@ -264,6 +291,9 @@ sample_projects <- fetch_projects_from_db()
 if (nrow(sample_projects) == 0) {
   warning("No projects found in database! Please check your database connection and data.")
 }
+
+# Normalise le champ pays (villes/états US → "United States")
+sample_projects$country <- sapply(sample_projects$country, normalize_country)
 
 # Build project_rewards list
 message("Loading rewards data...")

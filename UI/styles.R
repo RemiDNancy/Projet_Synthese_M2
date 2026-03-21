@@ -447,15 +447,15 @@ app_styles <- function() {
           box-shadow: 0 8px 30px rgba(0,0,0,0.2);
         }
 
-        /* Oracle Card - Purple Theme */
+        /* Oracle Card - Indigo Theme */
         .oracle-card {
-          background: linear-gradient(135deg, #9333EA 0%, #7C3AED 100%);
+          background: linear-gradient(135deg, #5B6AD4 0%, #4A58C2 100%);
           color: white;
         }
 
-        /* Sage Card - Green Theme */
+        /* Sage Card - Teal Theme */
         .sage-card {
-          background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+          background: linear-gradient(135deg, #2A8F74 0%, #1E7A61 100%);
           color: white;
         }
 
@@ -588,19 +588,18 @@ app_styles <- function() {
           }
         }
 
-        .oracle-panel {
-          background: linear-gradient(135deg, #9333EA 0%, #7C3AED 100%);
+        /* Both analysis panels share the same neutral background */
+        .oracle-panel, .sage-panel {
+          background: #F8F7F4;
           border-radius: 16px;
           padding: 30px;
-          color: white;
+          color: #2C3E50;
+          border: 1px solid #E5E7EB;
         }
 
-        .sage-panel {
-          background: linear-gradient(135deg, #059669 0%, #10B981 100%);
-          border-radius: 16px;
-          padding: 30px;
-          color: white;
-        }
+        /* Title colors stay model-specific */
+        .oracle-panel .ai-analysis-title { color: #5B6AD4; }
+        .sage-panel   .ai-analysis-title { color: #2A8F74; }
 
         /* Analysis Header */
         .ai-analysis-header {
@@ -609,7 +608,7 @@ app_styles <- function() {
           gap: 15px;
           margin-bottom: 30px;
           padding-bottom: 20px;
-          border-bottom: 2px solid rgba(255,255,255,0.2);
+          border-bottom: 2px solid #E5E7EB;
         }
 
         .ai-analysis-icon {
@@ -620,8 +619,11 @@ app_styles <- function() {
           align-items: center;
           justify-content: center;
           font-size: 24px;
-          background: rgba(255,255,255,0.2);
+          background: #ECEEF8;
         }
+
+        .oracle-panel .ai-analysis-icon { background: rgba(91,106,212,0.12); }
+        .sage-panel   .ai-analysis-icon { background: rgba(42,143,116,0.12); }
 
         .ai-analysis-title {
           font-size: 28px;
@@ -630,17 +632,17 @@ app_styles <- function() {
 
         .ai-analysis-subtitle {
           font-size: 14px;
-          opacity: 0.8;
+          color: #6B7280;
           font-weight: normal;
         }
 
         /* Detail Boxes */
         .ai-detail-box {
-          background: rgba(255,255,255,0.1);
+          background: #FFFFFF;
           border-radius: 12px;
           padding: 20px;
           margin-bottom: 20px;
-          backdrop-filter: blur(10px);
+          border: 1px solid #E5E7EB;
         }
 
         .ai-detail-header {
@@ -649,6 +651,7 @@ app_styles <- function() {
           margin-bottom: 15px;
           display: flex;
           align-items: center;
+          color: #2C3E50;
         }
 
         .ai-detail-list {
@@ -662,7 +665,7 @@ app_styles <- function() {
           justify-content: space-between;
           align-items: center;
           padding: 10px 0;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          border-bottom: 1px solid #E5E7EB;
         }
 
         .ai-detail-item:last-child {
@@ -671,7 +674,7 @@ app_styles <- function() {
 
         .ai-detail-label {
           font-size: 14px;
-          opacity: 0.9;
+          color: #6B7280;
           display: flex;
           align-items: center;
         }
@@ -679,6 +682,7 @@ app_styles <- function() {
         .ai-detail-value {
           font-size: 18px;
           font-weight: bold;
+          color: #2C3E50;
         }
 
         /* Success Factors */
@@ -695,7 +699,7 @@ app_styles <- function() {
         .ai-factor-name {
           font-size: 14px;
           margin-bottom: 5px;
-          opacity: 0.9;
+          color: #6B7280;
         }
 
         .ai-factor-score {
@@ -705,6 +709,7 @@ app_styles <- function() {
           font-size: 18px;
           font-weight: bold;
           margin-bottom: 8px;
+          color: #2C3E50;
         }
 
         .ai-badge {
@@ -727,17 +732,17 @@ app_styles <- function() {
         .ai-factor-bar {
           width: 100%;
           height: 6px;
-          background: rgba(255,255,255,0.2);
+          background: #E5E7EB;
           border-radius: 3px;
         }
 
         /* Comparison Box */
         .ai-comparison-box {
-          background: rgba(255,255,255,0.1);
+          background: #FFFFFF;
           border-radius: 16px;
           padding: 25px;
           margin-top: 20px;
-          backdrop-filter: blur(10px);
+          border: 1px solid #E5E7EB;
         }
 
         .ai-comparison-header {
@@ -746,12 +751,14 @@ app_styles <- function() {
           margin-bottom: 20px;
           display: flex;
           align-items: center;
+          color: #2C3E50;
         }
 
         .ai-compare-item {
-          background: rgba(255,255,255,0.1);
+          background: #F9FAFB;
           border-radius: 12px;
           padding: 20px;
+          border: 1px solid #E5E7EB;
         }
 
         .ai-compare-model {
@@ -768,35 +775,40 @@ app_styles <- function() {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: rgba(255,255,255,0.2);
+          background: #ECEEF8;
         }
+
+        .oracle-compare .ai-compare-icon { background: rgba(91,106,212,0.12); }
+        .sage-compare   .ai-compare-icon { background: rgba(42,143,116,0.12); }
 
         .ai-compare-info {
           font-size: 14px;
+          color: #2C3E50;
         }
 
         .ai-compare-subtitle {
           font-size: 11px;
-          opacity: 0.7;
+          color: #95A5A6;
         }
 
         .ai-compare-prediction {
           font-size: 42px;
           font-weight: bold;
           margin: 12px 0;
+          color: #2C3E50;
         }
 
         .ai-compare-bar {
           width: 100%;
           height: 8px;
-          background: rgba(255,255,255,0.2);
+          background: #E5E7EB;
           border-radius: 4px;
           margin-bottom: 8px;
         }
 
         .ai-compare-confidence {
           font-size: 12px;
-          opacity: 0.8;
+          color: #95A5A6;
         }
 
         /* Gap Indicator */
@@ -807,7 +819,7 @@ app_styles <- function() {
 
         .ai-gap-label {
           font-size: 12px;
-          opacity: 0.8;
+          color: #6B7280;
           margin-bottom: 5px;
         }
 
@@ -815,11 +827,12 @@ app_styles <- function() {
           font-size: 32px;
           font-weight: bold;
           margin-bottom: 10px;
+          color: #2C3E50;
         }
 
         .ai-gap-note {
           font-size: 13px;
-          opacity: 0.9;
+          color: #6B7280;
           display: flex;
           align-items: center;
           justify-content: center;
